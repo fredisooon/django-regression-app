@@ -3,5 +3,8 @@ from django.http import HttpResponse
 
 # Create your views here.
 
-def index(request):
-    return render(request, "welcome/cover.html")
+def landing(request):
+    return render(request, "welcome/landing.html")
+
+def workspace(request):
+    return render(request, "welcome/workspace.html")
