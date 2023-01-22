@@ -16,7 +16,7 @@
             <h2 class="logo"><a href="#" class="logo-link">Workplace</a></h2>
             <ul class="menu">
                 <li class="list-item menu-item"><a href="#" class="list-link menu-link">Action</a></li>
-                <li class="list-item menu-item"><a href="#" class="list-link menu-link">Регрессионный анализ</a></li>
+                <li class="list-item menu-item"><a href="#" class="list-link menu-link">Регрессионный<br> анализ</a></li>
                 <li class="list-item menu-item"><a href="#" class="list-link menu-link">Statistic</a></li>
                 <li class="list-item menu-item last-item"><a href="#" class="list-link menu-link">Back</a></li>
             </ul>
@@ -26,16 +26,89 @@
             </div>
         </div>
         <div class="main">
-            <nav class="nav">
-                <ul class="list">
-                    <li class="list-item nav-item"><a class="list-link" href="#">8 923 777-77-77</a></li>
-                    <li class="list-item nav-item"><a href="#" class="list-link">Email</a></li>
-                    <li class="list-item nav-item"><a href="#" class="list-link">Telegram</a></li>
-                    <li class="list-item nav-item"><a href="#" class="list-link">VK</a></li>
-                </ul>
-            </nav>>
-            <div class="main-div">Hey you</div>
+            <div class="container">
+                <div class="navigation">
+                    <nav class="nav">
+                        <ul class="list">
+                            <li class="list-item nav-item"><a class="list-link" href="#">8 923 777-77-77</a></li>
+                            <li class="list-item nav-item"><a href="#" class="list-link">Email</a></li>
+                            <li class="list-item nav-item"><a href="#" class="list-link">Telegram</a></li>
+                            <li class="list-item nav-item"><a href="#" class="list-link">VK</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="work-area">
+                    <div class="file" id="drop-zone">
+                        <h1 class="file-title">Загрузка файла</h1>
+                        <form class="file-actions" enctype="multipart/form-data" method="post">
+                            <label for="file-uploader" class="custom-file-uploader">
+                                <input type="file" id="file-uploader" class="file-input">
+                                Выберите файл
+                            </label>
+                            <input type="submit" value="Отправить" class="submit-input">
+                            <p class="file-text">Загрузите файл с данными для анализа</p>
+                        </form>
+                        <p id="feedback"></p>
+                        <label id="progress-label" for="progress"></label>
+                        <progress id="progress" value="0" max="100"> </progress>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+    <script>
+        const fileUploader = document.getElementById('file-uploader');
+        const progress = document.getElementById('progress');
+        const feedback = document.getElementById('feedback');
+        const reader = new FileReader();
+        progress.style.display = 'none';
+
+        fileUploader.addEventListener('change', (event) => {
+            const files = event.target.files;
+            const file = files[0];
+            console.log('file', file);
+            reader.readAsDataURL(file);
+
+            progress.style.display = 'block';
+
+            reader.addEventListener('progress', (event) => {
+                if (event.loaded && event.total) {
+                    const percent = (event.loaded / event.total) * 100;
+                    progress.value = percent;
+                    document.getElementById('progress-label').innerHTML = Math.round(percent) + '%';
+                
+                    if (percent === 100) {
+                        const msg = `Файл ${files[0].name} успешно загружен!`;
+                        feedback.innerHTML = msg;
+                    }
+                }
+            });
+        });
+
+        const dropZone = document.getElementById('drop-zone');
+
+        if (window.FileList && window.File) {
+            dropZone.addEventListener('dragover', event => {
+            event.stopPropagation();
+            event.preventDefault();
+            event.dataTransfer.dropEffect = 'copy';
+         })
+        };
+  
+        dropZone.addEventListener('drop', event => {
+            feedback.innerHTML = '';
+            event.stopPropagation();
+            event.preventDefault();
+            const file = event.dataTransfer.files;
+            console.log(file);
+    
+            reader.readAsDataURL(file[0]);
+            reader.addEventListener('load', (event) => {
+                const msg = `Файл ${file[0].name} успешно загружен!`;
+                feedback.innerHTML = msg;
+            });
+        });
+        
+    </script>
 </body>
 </html>
