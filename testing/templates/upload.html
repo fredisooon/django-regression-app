@@ -1,0 +1,13 @@
+{% extends 'base.html'%}
+{% block content %}
+<div>
+    <h3>Upload file</h3>
+    <p>Upload your file with source data.</p>
+    <hr>
+    <form method="post" action="upload" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{form}}
+        <button type="submit">Upload file</button>
+    </form>
+</div>
+{% endblock %}
