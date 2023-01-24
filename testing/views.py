@@ -14,6 +14,7 @@ def hello(request):
 def index(request):
     if request.method == 'POST':
        form = UploadFileForm(request.POST, request.FILES)
+       print(request.FILES['file'])
        if form.is_valid():
             #string = "File " + request.FILES['file'].name
             #return JsonResponse(string)

@@ -1,0 +1,39 @@
+{% extends 'welcome/base-workspace.html' %}
+{% block content %}
+<div class="file" id="drop-zone">
+    <h1 class="file-title">Загрузка файла</h1>
+    <form class="file-actions" enctype="multipart/form-data" method="post" id="upload-form">
+        {% csrf_token %}
+        <label for="file-uploader" class="custom-file-uploader">
+            {{form}}
+            Выберите файл
+        </label>
+        <input type="submit" value="Отправить" class="submit-input">
+        <p class="file-text">Загрузите файл c данными для анализа</p>
+    </form>
+    <p id="feedback"></p>
+    <label id="progress-label" for="progress"></label>
+    <progress id="progress" value="0" max="100"> </progress>
+</div>
+<script 
+   src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+   <script type="text/javascript">
+    
+    $('#upload-form').submit(function(e){
+        e.preventDefault();
+        $form = $(this)
+        var formData = new FormData(this);
+        $.ajax({
+            url: '',
+            type: 'POST',
+            data: formData,
+            success: function (response) {
+                console.log('OK')
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+    });
+   </script>
+{% endblock %}

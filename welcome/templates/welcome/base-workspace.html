@@ -1,0 +1,180 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <link rel="stylesheet" href="{% static 'welcome/workspace-style.css' %}">
+    <title>Document</title>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="sidebar">
+            <h2 class="logo"><a href="#" class="logo-link">Workplace</a></h2>
+            <ul class="menu">
+                <li class="list-item menu-item"><a href="#" class="list-link menu-link">Action</a></li>
+                <li class="list-item menu-item"><a href="#" class="list-link menu-link">Регрессионный<br> анализ</a></li>
+                <li class="list-item menu-item"><a href="#" class="list-link menu-link">Statistic</a></li>
+                <li class="list-item menu-item last-item"><a href="#" class="list-link menu-link">Back</a></li>
+            </ul>
+            <div class="sidebar-user">
+                <img src="{% static 'welcome/image/person2.svg' %}" alt="User" class="user-avatar">
+                <div class="user-name">Fedya</div>
+            </div>
+        </div>
+        <div class="main">
+            <div class="container">
+                <div class="navigation">
+                    <nav class="nav">
+                        <ul class="list">
+                            <li class="list-item nav-item"><a class="list-link" href="#">8 923 777-77-77</a></li>
+                            <li class="list-item nav-item"><a href="#" class="list-link">Email</a></li>
+                            <li class="list-item nav-item"><a href="#" class="list-link">Telegram</a></li>
+                            <li class="list-item nav-item"><a href="#" class="list-link">VK</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="work-area">
+                    {% block content %}
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <script
+  src="https://code.jquery.com/jquery-3.6.3.min.js"
+  integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU="
+  crossorigin="anonymous"></script>
+    <script>
+        const fileUploader = document.getElementById('file-uploader');
+        const progress = document.getElementById('progress');
+        const feedback = document.getElementById('feedback');
+        const dropZone = document.getElementById('drop-zone');
+
+        const reader = new FileReader();
+
+        progress.style.display = 'none';
+
+        fileUploader.addEventListener('change', (event) => {
+            const files = event.target.files;
+            const file = files[0];
+
+            reader.readAsDataURL(file);
+
+            progress.style.display = 'block';
+
+            reader.addEventListener('progress', (event) => {
+                if (event.loaded && event.total) {
+                    const percent = (event.loaded / event.total) * 100;
+                    progress.value = percent;
+
+                    document.getElementById('progress-label').innerHTML = Math.round(percent) + '%';
+                
+                    if (percent === 100) {
+                        const msg = `Файл ${files[0].name} успешно загружен!`;
+                        feedback.innerHTML = msg;
+                    }
+                }
+            });
+        });
+
+        
+
+        if (window.FileList && window.File) {
+            dropZone.addEventListener('dragover', event => {
+            event.stopPropagation();
+            event.preventDefault();
+            event.dataTransfer.dropEffect = 'copy';
+         })
+        };
+  
+        dropZone.addEventListener('drop', event => {
+            feedback.innerHTML = '';
+
+            event.stopPropagation();
+            event.preventDefault();
+
+            const files = event.dataTransfer.files;
+            console.log(files);
+
+            let fileType = files[0].type;
+            if(fileType === 'text/csv') {
+                reader.readAsDataURL(files[0]);
+                reader.addEventListener('load', (event) => {
+                    const msg = `Файл ${files[0].name} успешно загружен!`;
+                    feedback.style.color = '#10243d';
+                    feedback.innerHTML = msg;
+                });
+            } else {
+                const msg = 'Выберете файл с разрешением ".csv"';
+                feedback.innerHTML = msg;
+                feedback.style.color = 'red';
+            }
+        });
+
+        // $("#file-uploader").change(function() {
+        //     var fd = new FormData();
+        //     fd.append('file', this.files[0]); // since this is your file input
+
+        //     $.ajax({
+        //         url: "",
+        //         type: "post",
+        //         dataType: 'json',
+        //         processData: false, // important
+        //         contentType: false, // important
+        //         data: fd,
+        //         success: function(text) {
+        //             alert(text);
+        //             if(text == "success") {
+        //                 alert("Your image was uploaded successfully");
+        //             }
+        //         },
+        //         error: function() {
+        //             alert("An error occured, please try again.");         
+        //         }       
+        //     });
+        // });   
+
+        $(function () {
+            // BIND TO FORM submit
+            $('#upload').submit(function (e) {
+                // PREVENT DEFAULT FORM BEHAVIOUR
+                e.preventDefault();
+  
+                // SANITY CHECKS - MODIFY AS NEEDED
+                var fil = document.getElementById('file-uploader');
+
+  
+                // WE USE FormData INSTEAD OF SERIALIZE AS 
+                // THIS WILL GET THE FILE DATA CORRECTLY
+                var data = new FormData(this);
+  
+                // AJAX BACK TO THE SERVER - NOTE THE ADDITIONAL PROPERTIES 
+                // IN THE AJAX OPTIONS AND THE USE OF done() INSTEAD OF
+                // success
+                $.ajax({
+                    url: "",
+                    type: "POST",
+                    data:  data,
+                    processData: false,
+                    contentType: false,
+                    dataType: "json"
+                }).done(function(resp) {
+                     // CHECK WE HAVE DATA
+                    if (resp) {
+                        // LOOP THROUGH RETURN
+                        $.each(resp, function(i,e) {
+                            // HERE WE ADD i (INDEX) AS THE VALUE AND e (VALUE) AS THE VISIBLE
+                            // OPTION. CHANGE AS REQUIRED
+                            $('#box1').append($('<option/>', {value: i}).html(e));
+                        })
+                    }
+                });  
+            });
+        });
+    </script>
+</body>
+</html>
