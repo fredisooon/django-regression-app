@@ -53,20 +53,6 @@ body {
     padding: 0 15px;
     text-align: center;
 }
-.last-item {
-    position: relative;
-}
-.last-item::before {
-    content: "";
-    background: url("/image/back-arrow.svg");
-    background-repeat: no-repeat;
-    position: absolute;
-    display: block;
-    width: 25px;
-    height: 25px;
-    top: calc(50% - 7px);
-    left: -15px;
-}
 .menu-link {
     transition: .3s all;
 }
@@ -157,14 +143,10 @@ body {
     text-align: center;
     border-radius: 10px;
 }
-.file-title {
-    font-size: 25px;
-    color: #10243d;
-}
-.file-input {
+input[type=file] {
     display: none;
 }
-.custom-file-uploader {
+.file-actions>label {
     border: 1px solid #ccc;
     background-color: #10243d;
     border-radius: 10px;
@@ -176,8 +158,12 @@ body {
     transition: box-shadow .3s;
     margin-right: 5px;
 }
-.custom-file-uploader:hover {
-    box-shadow: 0 0 10px rgba(33,33,33,.5);;
+.file-actions>label:hover {
+    box-shadow: 0 0 10px rgba(33,33,33,.5);
+}
+.file-title {
+    font-size: 25px;
+    color: #10243d;
 }
 .submit-input {
     border: none;

@@ -49,10 +49,13 @@
   integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU="
   crossorigin="anonymous"></script>
     <script>
-        const fileUploader = document.getElementById('file-uploader');
+        const fileUploader = document.getElementById('id_file');
         const progress = document.getElementById('progress');
         const feedback = document.getElementById('feedback');
         const dropZone = document.getElementById('drop-zone');
+        const progressLabel = document.getElementById('progress-label');
+
+        const sleep = ms => new Promise(r => setTimeout(r, ms));
 
         const reader = new FileReader();
 
@@ -66,15 +69,21 @@
 
             progress.style.display = 'block';
 
-            reader.addEventListener('progress', (event) => {
+            reader.addEventListener('progress', async (event) => {
                 if (event.loaded && event.total) {
                     const percent = (event.loaded / event.total) * 100;
                     progress.value = percent;
 
-                    document.getElementById('progress-label').innerHTML = Math.round(percent) + '%';
-                
+                    progressLabel.innerHTML = Math.round(percent) + '%';
+
+                    await sleep(1000);
+
+                    progressLabel.innerHTML = '';
+                    progress.style.display = 'none';
+
+                    
                     if (percent === 100) {
-                        const msg = `Файл ${files[0].name} успешно загружен!`;
+                        const msg = `Файл "${files[0].name}" успешно загружен!`;
                         feedback.innerHTML = msg;
                     }
                 }
@@ -104,7 +113,7 @@
             if(fileType === 'text/csv') {
                 reader.readAsDataURL(files[0]);
                 reader.addEventListener('load', (event) => {
-                    const msg = `Файл ${files[0].name} успешно загружен!`;
+                    const msg = `Файл "${files[0].name}" успешно загружен!`;
                     feedback.style.color = '#10243d';
                     feedback.innerHTML = msg;
                 });
@@ -113,67 +122,6 @@
                 feedback.innerHTML = msg;
                 feedback.style.color = 'red';
             }
-        });
-
-        // $("#file-uploader").change(function() {
-        //     var fd = new FormData();
-        //     fd.append('file', this.files[0]); // since this is your file input
-
-        //     $.ajax({
-        //         url: "",
-        //         type: "post",
-        //         dataType: 'json',
-        //         processData: false, // important
-        //         contentType: false, // important
-        //         data: fd,
-        //         success: function(text) {
-        //             alert(text);
-        //             if(text == "success") {
-        //                 alert("Your image was uploaded successfully");
-        //             }
-        //         },
-        //         error: function() {
-        //             alert("An error occured, please try again.");         
-        //         }       
-        //     });
-        // });   
-
-        $(function () {
-            // BIND TO FORM submit
-            $('#upload').submit(function (e) {
-                // PREVENT DEFAULT FORM BEHAVIOUR
-                e.preventDefault();
-  
-                // SANITY CHECKS - MODIFY AS NEEDED
-                var fil = document.getElementById('file-uploader');
-
-  
-                // WE USE FormData INSTEAD OF SERIALIZE AS 
-                // THIS WILL GET THE FILE DATA CORRECTLY
-                var data = new FormData(this);
-  
-                // AJAX BACK TO THE SERVER - NOTE THE ADDITIONAL PROPERTIES 
-                // IN THE AJAX OPTIONS AND THE USE OF done() INSTEAD OF
-                // success
-                $.ajax({
-                    url: "",
-                    type: "POST",
-                    data:  data,
-                    processData: false,
-                    contentType: false,
-                    dataType: "json"
-                }).done(function(resp) {
-                     // CHECK WE HAVE DATA
-                    if (resp) {
-                        // LOOP THROUGH RETURN
-                        $.each(resp, function(i,e) {
-                            // HERE WE ADD i (INDEX) AS THE VALUE AND e (VALUE) AS THE VISIBLE
-                            // OPTION. CHANGE AS REQUIRED
-                            $('#box1').append($('<option/>', {value: i}).html(e));
-                        })
-                    }
-                });  
-            });
         });
     </script>
 </body>

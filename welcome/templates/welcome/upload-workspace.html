@@ -4,9 +4,7 @@
     <h1 class="file-title">Загрузка файла</h1>
     <form class="file-actions" enctype="multipart/form-data" method="post" id="upload-form">
         {% csrf_token %}
-        <label for="file-uploader" class="custom-file-uploader">
             {{form}}
-            Выберите файл
         </label>
         <input type="submit" value="Отправить" class="submit-input">
         <p class="file-text">Загрузите файл c данными для анализа</p>
