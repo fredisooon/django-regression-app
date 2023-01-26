@@ -1,14 +1,26 @@
 import numpy as np
 import pandas as pd
-from scipy import stats
-import csv
+import logging as log
+from pandas.errors import EmptyDataError
 
 
-def handle_uploaded_file(f):
-    if f.name.endswith(".csv"):
-        print("We have access to the file")
-    else:
-        print("ERROR")
-    df = pd.read_csv(f)
-    print(df.columns[0], df.columns[5]) #выводим названия столбцов в файлы 
-                                        #чтобы убедится что мы имеем доступ к файлу
+def get_list_of_file_headers(requestFiles):
+    urgentFile = requestFiles['file']
+    try:
+        dataFile = pd.read_csv(urgentFile)
+        log.info(f'{urgentFile.name} was successfully read via pandas')
+
+        return get_headers(dataFile)
+    except EmptyDataError:
+        log.warning(f'{urgentFile.name} is empty')
+
+        return []
+
+
+def get_headers(dataFile):
+    listOfHeaders = list()
+    for column in dataFile.columns:
+        print(column)
+        listOfHeaders.append(column)
+
+    return listOfHeaders
