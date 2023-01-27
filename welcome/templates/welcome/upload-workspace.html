@@ -21,12 +21,80 @@
         e.preventDefault();
         $form = $(this)
         var formData = new FormData(this);
+        let checkboxDiv = document.getElementById("checkboxes-area");
+        let radioDiv = document.getElementById("radio-area");
+        checkboxDiv.innerHTML = '';
+        radioDiv.innerHTML = '';
         $.ajax({
             url: '',
             type: 'POST',
             data: formData,
             success: function (response) {
-                console.log('OK')
+                response = JSON.stringify(response);
+                let json = JSON.parse(response);
+
+
+                let titles = document.querySelectorAll(".variable-title");
+
+
+                for(let i = 0; i < titles.length; i++) {
+                    titles[i].style.display = "block";
+                }
+
+                let label;
+                let radio_item;
+
+                for(let i = 0; i < json.headers_list.length; i++) {
+                    label = document.createElement("label");
+                    radio_item = document.createElement("input");
+
+                    radio_item.type = "radio";
+                    radio_item.className = "radio-item";
+                    radio_item.name = "radio";
+                    radio_item.value = json.headers_list[i];
+                    radio_item.id = "radio-" + i;
+
+                    label.style.marginRight = '10px';
+
+                    radioDiv.appendChild(label);
+                    label.appendChild(radio_item);
+
+                    label.appendChild(document.createTextNode(json.headers_list[i]));
+                }
+
+                for(let i = 0; i < json.headers_list.length; i++) {
+                    let label = document.createElement("label");
+                    let checkBox = document.createElement("input");
+
+                    checkBox.type = "checkbox";
+                    checkBox.className = "checkbox";
+                    checkBox.value = json.headers_list[i];
+                    checkBox.id = "checkbox-" + i;
+
+                    label.style.marginRight = '10px';
+
+                    checkboxDiv.appendChild(label);
+                    label.appendChild(checkBox);
+                
+
+                    label.appendChild(document.createTextNode(json.headers_list[i]));
+                }
+
+                //код проверки на выбор радиобаттнона
+
+                // radio_item.onchange = function() {
+                //     for(let i = 0; i < json.headers_list.length; i++) {
+                //         let radio_item = document.getElementById('radio-' + i);
+                //         let checkBox = document.getElementById('checkbox-' + i)
+                
+                //         if(this.checked) {
+                //             checkBox.disabled = true;
+                //         } else {
+                //             checkBox.disabled = false;
+                //         }
+                //     }
+                // } 
+                
             },
             cache: false,
             contentType: false,
