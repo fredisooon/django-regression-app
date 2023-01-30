@@ -43,13 +43,13 @@ def result(request):
                                  'war_falg': False,
                                  'message': 'OK',
                                  'analysis_data': 'Valid',
-                                 'type_of_analys': 'Simple Linear'})
+                                 'type_of_analys': 'Простая Линейная'})
         elif (len(list2) > 1):
             return JsonResponse({'error_flag': False,
                                  'war_falg': False,
                                  'message': 'OK',
                                  'analysis_data': 'Valid',
-                                 'type_of_analys': 'Multiple Linear'})
+                                 'type_of_analys': 'Мульти Линейная'})
         elif (len(list2) == 0):
             return JsonResponse({'error_flag': False,
                                  'war_falg': True,
