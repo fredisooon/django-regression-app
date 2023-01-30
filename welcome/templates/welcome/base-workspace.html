@@ -43,11 +43,13 @@
                     <div class="choose-variables" id="id-div">
                         <div class="radio">
                             <h3 class="variable-title">Зависимая переменная:</h3>
-                            <form id="radio-area" name="formRadio"></form>
+                            <form class="var-form" id="radio-area" name="formRadio" method="post">
+                                {% csrf_token %}
+                            </form>
                         </div>
                         <div class="checkboxes">
                             <h3 class="variable-title">Независимая переменная:</h3>
-                            <form id="checkboxes-area" name="formCheck" method="post">
+                            <form class="var-form" id="checkboxes-area" name="formCheck" method="post">
                                 {% csrf_token %}
                             </form>
                         </div>
@@ -61,24 +63,32 @@
   integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU="
   crossorigin="anonymous"></script>
     <script>
-
-    $('#checkboxes-area').on('click', 'input', function(e){
+    
+    $('.var-form').on('click', 'input', function(e){
         let checkboxes = document.querySelectorAll('.checkbox')
-        let resultList = []
+        let radioItems = document.querySelectorAll('.radio-item')
+        let checkResult = []
+        let radioResult = []
         for (let checkbox of checkboxes) {
             if (checkbox.checked == true) {
-                resultList.push(checkbox.value)
+                checkResult.push(checkbox.value)
             }
         }
-        console.log(resultList)
-
+        console.log(checkResult)
+        for (let radio of radioItems) {
+            if (radio.checked == true) {
+                radioResult.push(radio.value)
+            }
+        }
+        console.log(radioResult)
         $.ajax({
             url: 'result',
             type: 'POST',
             dataType: 'json',
             data: {
                 'status': 'OK',
-                'list': resultList,
+                'listOfRadio': radioResult,
+                'listOfCheckboxes': checkResult,
                 'csrfmiddlewaretoken': '{{ csrf_token }}'
             },
             success: function (response) {
@@ -118,7 +128,7 @@
 
                     progressLabel.innerHTML = Math.round(percent) + '%';
 
-                    await sleep(1000);
+                    await sleep(0);
 
                     progressLabel.innerHTML = '';
                     progress.style.display = 'none';

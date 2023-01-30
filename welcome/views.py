@@ -34,7 +34,31 @@ def workspace(request):
 
 
 def result(request):
-    if request.POST['status'] == 'OK':
-            print("OKOKOKOKOK")
-            print(request.POST)
-    return JsonResponse({'status': 'OK 2023'})
+    list1 = request.POST.getlist('listOfRadio[]')
+    list2 = request.POST.getlist('listOfCheckboxes[]')
+
+    if (len(list1) == 1):
+        if (len(list2) == 1):
+            return JsonResponse({'error_flag': False,
+                                 'war_falg': False,
+                                 'message': 'OK',
+                                 'analysis_data': 'Valid',
+                                 'type_of_analys': 'Simple Linear'})
+        elif (len(list2) > 1):
+            return JsonResponse({'error_flag': False,
+                                 'war_falg': False,
+                                 'message': 'OK',
+                                 'analysis_data': 'Valid',
+                                 'type_of_analys': 'Multiple Linear'})
+        elif (len(list2) == 0):
+            return JsonResponse({'error_flag': False,
+                                 'war_falg': True,
+                                 'message': 'WAR: Independent variables are not selected'})
+    elif (len(list1) == 0 ):
+        return JsonResponse({'error_flag': False,
+                             'war_falg': True,
+                            'message': 'WAR: Dependent variable not selected'})    
+    else:
+        return JsonResponse({'error_flag': True,
+                             'war_falg': False,
+                             'message': 'ERROR: There can be only one dependent variable'})    
