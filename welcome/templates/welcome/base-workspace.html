@@ -40,14 +40,16 @@
                 <div class="work-area">
                     {% block content %}
                     {% endblock %}
-                    <div class="choose-variables">
+                    <div class="choose-variables" id="id-div">
                         <div class="radio">
                             <h3 class="variable-title">Зависимая переменная:</h3>
                             <form id="radio-area" name="formRadio"></form>
                         </div>
                         <div class="checkboxes">
                             <h3 class="variable-title">Независимая переменная:</h3>
-                            <form id="checkboxes-area" name="formCheck"></form>
+                            <form id="checkboxes-area" name="formCheck" method="post">
+                                {% csrf_token %}
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -59,6 +61,36 @@
   integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU="
   crossorigin="anonymous"></script>
     <script>
+
+    $('#checkboxes-area').on('click', 'input', function(e){
+        let checkboxes = document.querySelectorAll('.checkbox')
+        let resultList = []
+        for (let checkbox of checkboxes) {
+            if (checkbox.checked == true) {
+                resultList.push(checkbox.value)
+            }
+        }
+        console.log(resultList)
+
+        $.ajax({
+            url: 'result',
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                'status': 'OK',
+                'list': resultList,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function (response) {
+                console.log(123)
+
+            },
+            error: function (response) {
+
+            }
+        });
+     });
+
         const fileUploader = document.getElementById('id_file');
         const progress = document.getElementById('progress');
         const feedback = document.getElementById('feedback');

@@ -1,3 +1,4 @@
+import json
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.shortcuts import render
 from testing.utils.uploadings import handle_uploaded_file
@@ -37,3 +38,13 @@ def upload_file(request):
     else:
         form = UploadFileForm()
     return render(request, 'upload.html', {'form': form})
+
+
+def rest(request):
+    print('Hello')
+    if request.POST['status'] == 'OK':
+        print(request.POST.getlist('list[]'))
+        resultList = request.POST.getlist('list[]')
+        
+    return JsonResponse({'status': 'OK 2023',
+                          'checkboxes': resultList})

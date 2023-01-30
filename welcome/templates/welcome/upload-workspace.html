@@ -16,9 +16,15 @@
 <script 
    src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
    <script type="text/javascript">
+
+        
+
+
     
+
     $('#upload-form').submit(function(e){
         e.preventDefault();
+        console.log(321)
         $form = $(this)
         var formData = new FormData(this);
         let checkboxDiv = document.getElementById("checkboxes-area");
@@ -33,9 +39,11 @@
                 response = JSON.stringify(response);
                 let json = JSON.parse(response);
 
+                let valiablesArea = document.querySelector(".choose-variables");
+                valiablesArea.style.borderTop = "1px solid #95989c";
+                valiablesArea.style.paddingTop = "40px";
 
                 let titles = document.querySelectorAll(".variable-title");
-
 
                 for(let i = 0; i < titles.length; i++) {
                     titles[i].style.display = "block";
@@ -70,6 +78,7 @@
                     checkBox.className = "checkbox";
                     checkBox.value = json.headers_list[i];
                     checkBox.id = "checkbox-" + i;
+                    checkBox.name = "checkbox";
 
                     label.style.marginRight = '10px';
 
@@ -81,25 +90,52 @@
                 }
 
                 //код проверки на выбор радиобаттнона
+                const
+                    formRadio = document.getElementById('radio-area'),
+                    formCheck = document.getElementById('checkboxes-area');
+                    let linkedCheckbox;
+                    let linkedRadio;
 
-                // radio_item.onchange = function() {
-                //     for(let i = 0; i < json.headers_list.length; i++) {
-                //         let radio_item = document.getElementById('radio-' + i);
-                //         let checkBox = document.getElementById('checkbox-' + i)
-                
-                //         if(this.checked) {
-                //             checkBox.disabled = true;
-                //         } else {
-                //             checkBox.disabled = false;
-                //         }
-                //     }
-                // } 
-                
+                    formRadio.addEventListener("click", switchToppingsRadio);
+                    formCheck.addEventListener("click", switchToppingsCheck);
+
+                    function switchToppingsRadio(event) {
+                        const clickedThing = event.target;
+
+                        if(clickedThing.name != 'radio') {
+                            return;
+                        }
+                        for(let i = 0; i < json.headers_list.length; i++) {
+                            if(clickedThing.id == 'radio-' + i) {
+                                linkedCheckbox = document.getElementById('checkbox-' + i).setAttribute("disabled", "");
+                                linkedCheckbox = document.getElementById('checkbox-' + i).setAttribute("unchecked", "");
+                            } else {
+                                linkedCheckbox =document.getElementById('checkbox-' + i).removeAttribute("disabled");
+                                linkedCheckbox = document.getElementById('checkbox-' + i).removeAttribute("checked");
+                            }
+                           
+                        }
+                    }
+
+                    function switchToppingsCheck(event) {
+                        const clickedThing = event.target;
+
+                        if(clickedThing.name != 'checkbox') {
+                            return;
+                        }
+                        for(let i = 0; i < json.headers_list.length; i++) {
+                            if(clickedThing.id == 'checkbox-' + i) {
+                                linkedRadio = document.getElementById('radio-' + i).toggleAttribute("disabled");
+                            }
+                        }
+                    }
             },
             cache: false,
             contentType: false,
             processData: false
         });
     });
+
+
    </script>
 {% endblock %}

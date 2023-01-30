@@ -10,9 +10,11 @@ def landing(request):
 
 def workspace(request):
     if request.method == 'POST':
-       form = UploadFileForm(request.POST, request.FILES)
-       print(request.FILES['file'])
-       if form.is_valid():
+        print('SECONT AJAX REQUEST GOING THROUGHT $THIS VIEW')
+        print(request.POST)
+        form = UploadFileForm(request.POST, request.FILES)
+        print(request.FILES['file'])
+        if form.is_valid():
             headersList = get_list_of_file_headers(request.FILES)
             if headersList:
                 return JsonResponse({'error': False,
@@ -23,9 +25,16 @@ def workspace(request):
                 return JsonResponse({'error': False,
                                     'message': 'File uploaded Successfully',
                                     'empty_flag': True})
-       else:
+        else:
            return JsonResponse({'error': True,
                                 'errors': form.errors})
     else:
         form = UploadFileForm()
         return render(request, 'welcome/upload-workspace.html', {'form': form})
+
+
+def result(request):
+    if request.POST['status'] == 'OK':
+            print("OKOKOKOKOK")
+            print(request.POST)
+    return JsonResponse({'status': 'OK 2023'})

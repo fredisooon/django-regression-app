@@ -10,4 +10,67 @@
         <button type="submit">Upload file</button>
     </form>
 </div>
+<br>
+<div>
+    <h1>30.01 Checkboxes testing</h1>
+    <div class="input-box-wrapper">
+        <div class="box" id="part1">
+            <form id="forma" method="post">
+                {% csrf_token %}
+                <input type="submit">
+            </form>  
+        </div>
+    </div>
+    <div class="print-values">
+        <p id="valueList"></p>
+    </div>
+</div>
+<script>
+    $('#forma').submit(function(e) {
+        e.preventDefault();
+        let checkboxDiv = document.getElementById("forma");
+        checkboxDiv.innerHTML = '';
+        for (let i = 0; i < 3; i++) {
+            let label = document.createElement("label")
+            let checkBox = document.createElement("input")
+
+            checkBox.type = "checkbox"
+            checkBox.className = "checkbox"
+            checkBox.value = "Prog Lang"
+            checkBox.id = "checkbox-" + i;
+            checkBox.name = "checkbox";
+            
+            checkboxDiv.appendChild(label)
+            label.appendChild(checkBox);
+            label.appendChild(document.createTextNode(i))
+        }
+    })
+    
+        $('#forma').on('click', 'input', function(e){
+        let checkboxes = document.querySelectorAll('.checkbox')
+        let resultList = []
+        for (let checkbox of checkboxes) {
+            if (checkbox.checked == true) {
+                resultList.push(checkbox.value)
+            }
+        }
+        console.log(resultList)
+        $.ajax({
+            url: 'rest',
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                'status': 'OK',
+                'list': resultList,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function (response) {
+            },
+            error: function (response) {
+            }
+        });
+     });
+
+    
+</script>
 {% endblock %}
