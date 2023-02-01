@@ -3,10 +3,37 @@ from django.http import HttpResponse, JsonResponse
 from welcome.forms import UploadFileForm
 from welcome.utils.file_utils import *
 from welcome.utils.validate_service import *
+from welcome.utils.regression_service import *
 from django.conf import settings
 import pandas as pd
-
+import json
 # Create your views here.
+
+def analysis(request):
+
+    if (request.POST['analysis_type'] == 'simple_linear'):
+        return JsonResponse(linear_regression(request))
+   
+
+    # ds = {
+    #     'name': 'Fyodor',
+    #     'age': 20,
+    #     'city': 'Ryazan',
+    #     'married': False,
+    #     'list': []
+    # }
+    # result = json.dumps(ds)
+    # return JsonResponse(result)
+    #return render(request, "welcome/landing.html")
+    
+    #return HttpResponse("<h1>Aloha!</h1>")
+        # return JsonResponse({
+        #     'error': False,
+        #     'message': 'OK',
+        #     'list1': request.POST.getlist('listOfRadio[]'),
+        #     'list2': request.POST.getlist('listOfCheckboxes[]')
+        #     })
+
 
 def landing(request):
     return render(request, "welcome/landing.html")
