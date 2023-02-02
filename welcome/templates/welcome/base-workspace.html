@@ -106,7 +106,8 @@
                 'status': 'OK',
                 'listOfCheckboxes': checkResult,
                 'listOfRadio': radioResult,
-                'analysis_type': 'simple_linear',
+                'analysis_type': 'multiple_linear',
+                'polynom_degree': 2,
                 'csrfmiddlewaretoken': '{{ csrf_token }}'
             },
             success: function (response) {

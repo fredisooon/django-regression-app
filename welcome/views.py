@@ -12,31 +12,22 @@ import json
 def analysis(request):
 
     if (request.POST['analysis_type'] == 'simple_linear'):
-        return JsonResponse(linear_regression(request))
-   
+        return JsonResponse(simple_linear_regression(request))
+    elif (request.POST['analysis_type'] == 'simple_polynominal'):
+        return JsonResponse(simple_polynominal_regression(request))
+    elif (request.POST['analysis_type'] == 'multiple_linear'):
+        return JsonResponse(multiple_linear_regression(request))
+    elif (request.POST['analysis_type'] == 'multiple_polynominal'):
+        return JsonResponse()
 
-    # ds = {
-    #     'name': 'Fyodor',
-    #     'age': 20,
-    #     'city': 'Ryazan',
-    #     'married': False,
-    #     'list': []
-    # }
-    # result = json.dumps(ds)
-    # return JsonResponse(result)
-    #return render(request, "welcome/landing.html")
-    
-    #return HttpResponse("<h1>Aloha!</h1>")
-        # return JsonResponse({
-        #     'error': False,
-        #     'message': 'OK',
-        #     'list1': request.POST.getlist('listOfRadio[]'),
-        #     'list2': request.POST.getlist('listOfCheckboxes[]')
-        #     })
+
+    return JsonResponse({'status': 'error',
+                         'message': 'no regression is selected'}) 
 
 
 def landing(request):
     return render(request, "welcome/landing.html")
+
 
 def workspace(request):
     if request.method == 'POST':
