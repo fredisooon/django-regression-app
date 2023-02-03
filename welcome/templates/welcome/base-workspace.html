@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
     <link rel="stylesheet" href="{% static 'welcome/workspace-style.css' %}">
-    <title>Document</title>
+    <title>Analysis-app</title>
 </head>
 <body>
     <div class="wrapper">
@@ -54,6 +54,18 @@
                             </form>
                         </div>
                     </div>
+                    <div class="regression-area">
+                        <div class="regression-wrapper">
+                            <h3 class="regression-title">Доступные регрессии</h3>
+                            <div class="regression-type"></div>
+                        </div>
+                        <div class="analysis-btn">
+                            <form method="post" class="analysis-form">
+                                {% csrf_token %}
+                                <button type="button" class="button" id="submit-id">Анализ</button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -63,6 +75,51 @@
   integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU="
   crossorigin="anonymous"></script>
     <script>
+    
+    $('.analysis-form').on('click', 'button', function(e){
+        let checkboxes = document.querySelectorAll('.checkbox')
+        let radioItems = document.querySelectorAll('.radio-item')
+        let checkResult = []
+        let radioResult = []
+        for (let checkbox of checkboxes) {
+            if (checkbox.checked == true) {
+                checkResult.push(checkbox.value)
+            }
+        }
+        console.log(checkResult)
+        for (let radio of radioItems) {
+            if (radio.checked == true) {
+                radioResult.push(radio.value)
+            }
+        }
+        console.log('Befor sending request')
+        $.ajax({
+            url: 'analysis',
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                'status': 'OK',
+                'listOfCheckboxes': checkResult,
+                'listOfRadio': radioResult,
+                'analysis_type': 'multiple_polynominal',
+                'polynom_degree': 1,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function (response) {
+                console.log(response)
+                //$('.result-area').html(response);
+                alert('Successful!')
+            },
+            error: function (response) { 
+                alert('Error')
+            }
+            
+        })
+    })
+
+
+
+
     
     $('.var-form').on('click', 'input', function(e){
         let checkboxes = document.querySelectorAll('.checkbox')
@@ -92,7 +149,32 @@
                 'csrfmiddlewaretoken': '{{ csrf_token }}'
             },
             success: function (response) {
-                console.log(123)
+                response = JSON.stringify(response);
+                let json = JSON.parse(response);
+
+
+                let area = document.querySelector('.regression-area');
+                let regressionDiv = document.querySelector('.regression-type');
+
+                while (regressionDiv.firstChild) {
+                    regressionDiv.removeChild(regressionDiv.firstChild);
+                }
+                console.log(json);
+
+                if (json.analysis_data == 'Valid') {
+                    for (let i in json.type_of_analys) {
+                        console.log(json.type_of_analys[i])
+                        let btn = document.createElement("button");
+                        btn.className = "button";
+                        btn.type = "button";
+                        btn.innerHTML = json.type_of_analys[i];
+
+                        regressionDiv.appendChild(btn);
+                    }
+                    
+                    
+                    area.style.display = "flex";
+                }
 
             },
             error: function (response) {
@@ -170,7 +252,7 @@
                     feedback.innerHTML = msg;
                 });
             } else {
-                const msg = 'Выберете файл с разрешением ".csv"';
+                const msg = 'Выберете файл с расширением ".csv"';
                 feedback.innerHTML = msg;
                 feedback.style.color = 'red';
             }

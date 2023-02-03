@@ -3,13 +3,31 @@ from django.http import HttpResponse, JsonResponse
 from welcome.forms import UploadFileForm
 from welcome.utils.file_utils import *
 from welcome.utils.validate_service import *
+from welcome.utils.regression_service import *
 from django.conf import settings
 import pandas as pd
-
+import json
 # Create your views here.
+
+def analysis(request):
+
+    if (request.POST['analysis_type'] == 'simple_linear'):
+        return JsonResponse(simple_linear_regression(request))
+    elif (request.POST['analysis_type'] == 'simple_polynominal'):
+        return JsonResponse(simple_polynominal_regression(request))
+    elif (request.POST['analysis_type'] == 'multiple_linear'):
+        return JsonResponse(multiple_linear_regression(request))
+    elif (request.POST['analysis_type'] == 'multiple_polynominal'):
+        return JsonResponse(multiple_polynom_regression(request))
+
+
+    return JsonResponse({'status': 'error',
+                         'message': 'no regression is selected'}) 
+
 
 def landing(request):
     return render(request, "welcome/landing.html")
+
 
 def workspace(request):
     if request.method == 'POST':
@@ -64,13 +82,13 @@ def result(request):
                                  'war_falg': False,
                                   'message': 'OK',
                                   'analysis_data': 'Valid',
-                                  'type_of_analys': 'Простая Линейная'})
+                                  'type_of_analys': ['Простая линейная', 'Простая полиноминальная']})
         else:
             return JsonResponse({'error_flag': False,
                                  'war_falg': True,
                                  'message': 'ERROR: Data type is not suitable for analysis',
                                  'analysis_data': 'Invalid',
-                                 'type_of_analys': 'Простая Линейная'})
+                                 'type_of_analys': ['Простая линейная', 'Простая полиноминальная']})
     
     
     # проверка валидности данных для применения 
@@ -81,10 +99,10 @@ def result(request):
                                  'war_falg': False,
                                  'message': 'OK',
                                  'analysis_data': 'Valid',
-                                 'type_of_analys': ['Мульти Линейная', 'Полиноминальная']})
+                                 'type_of_analys': ['Множественная Линейная', 'Множественная Полиноминальная']})
         else:
             return JsonResponse({'error_flag': False,
                                  'war_falg': True,
                                   'message': 'ERROR: Data type is not suitable for analysis',
                                   'analysis_data': 'Invalid',
-                                  'type_of_analys': ['Мульти Линейная', 'Полиноминальная']})
+                                  'type_of_analys': ['Множественная Линейная', 'Множественная Полиноминальная']})

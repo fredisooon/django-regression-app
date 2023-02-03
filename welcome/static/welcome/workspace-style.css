@@ -191,6 +191,7 @@ input[type=file] {
     justify-content: space-between;
     align-items: center;
     gap: 20px;
+    padding-bottom: 50px;
 }
 .radio {
     flex-basis: 50%;
@@ -227,4 +228,49 @@ input[type=file] {
     font-weight: 500;
     display: none;
     margin: 0 0 10px 0;
+}
+.regression-area {
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 50px;
+    padding-bottom: 30px;
+    border-top: 1px solid #95989c;
+}
+.regression-title {
+    color: #10243d;
+    margin-bottom: 25px;
+}
+.regression-type {
+    flex-wrap: wrap;
+}
+.regression-type .button {
+    border: solid 1px #10243d;
+    border-radius: 10px;
+    padding: 15px 15px;
+    color: #10243d;
+    background-color: #fff;
+    transition: all .5s;
+    margin-bottom: 15px;
+}
+.regression-type .button:hover {
+    color: #fff;
+    background-color: #10243d;
+}
+.regression-type .button:focus {
+    border: solid 1px #fff;
+    background-color: #10243d;
+    color: #fff;
+}
+.analysis-btn .button {
+    border: solid 1px #10243d;
+    border-radius: 10px;
+    padding: 15px 15px;
+    color: #fff;
+    background-color: #10243d;
+    transition: all .5s;
+}
+.analysis-btn .button:hover {
+    color: #10243d;
+    background-color: #fff;
 }
