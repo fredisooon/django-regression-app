@@ -18,7 +18,7 @@ def analysis(request):
     elif (request.POST['analysis_type'] == 'multiple_linear'):
         return JsonResponse(multiple_linear_regression(request))
     elif (request.POST['analysis_type'] == 'multiple_polynominal'):
-        return JsonResponse()
+        return JsonResponse(multiple_polynom_regression(request))
 
 
     return JsonResponse({'status': 'error',
@@ -82,13 +82,13 @@ def result(request):
                                  'war_falg': False,
                                   'message': 'OK',
                                   'analysis_data': 'Valid',
-                                  'type_of_analys': 'Простая Линейная'})
+                                  'type_of_analys': ['Простая линейная', 'Простая полиноминальная']})
         else:
             return JsonResponse({'error_flag': False,
                                  'war_falg': True,
                                  'message': 'ERROR: Data type is not suitable for analysis',
                                  'analysis_data': 'Invalid',
-                                 'type_of_analys': 'Простая Линейная'})
+                                 'type_of_analys': ['Простая линейная', 'Простая полиноминальная']})
     
     
     # проверка валидности данных для применения 
@@ -99,10 +99,10 @@ def result(request):
                                  'war_falg': False,
                                  'message': 'OK',
                                  'analysis_data': 'Valid',
-                                 'type_of_analys': ['Мульти Линейная', 'Полиноминальная']})
+                                 'type_of_analys': ['Множественная Линейная', 'Множественная Полиноминальная']})
         else:
             return JsonResponse({'error_flag': False,
                                  'war_falg': True,
                                   'message': 'ERROR: Data type is not suitable for analysis',
                                   'analysis_data': 'Invalid',
-                                  'type_of_analys': ['Мульти Линейная', 'Полиноминальная']})
+                                  'type_of_analys': ['Множественная Линейная', 'Множественная Полиноминальная']})
