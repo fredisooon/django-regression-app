@@ -4,6 +4,9 @@ from django.shortcuts import render
 from testing.utils.uploadings import handle_uploaded_file
 from .forms import UploadFileForm
 
+def table(request):
+    return render(request, 'table.html')
+
 
 def hello(request):
     if request.method == 'POST':
