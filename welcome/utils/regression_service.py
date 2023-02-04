@@ -22,6 +22,14 @@ def simple_linear_regression(request):
             'R square': model.score(X, Y)}
 
 
+
+    # return {'status': 'simple_linear',
+    #         'io_vars': model.coef_.tolist(),
+    #         'summary_for_model': model.intercept_,
+    #         'anova': model.score(X, Y),
+    #         'coefs': 1}
+
+
 def simple_polynominal_regression(request):
     print('Inside Polynom calc')
     indepVar = request.POST.getlist('listOfCheckboxes[]')
@@ -42,7 +50,7 @@ def simple_polynominal_regression(request):
     return {'status': 'simple_polynominal',
             'coef': poly_reg_model.coef_.tolist(),
             'intercept': poly_reg_model.intercept_,
-            'R square': poly_reg_model.score(X, Y)}
+            'R square': poly_reg_model.score(poly_features, Y)}
 
 
 def multiple_linear_regression(request):

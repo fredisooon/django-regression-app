@@ -57,13 +57,31 @@
                     <div class="regression-area">
                         <div class="regression-wrapper">
                             <h3 class="regression-title">Доступные регрессии</h3>
-                            <div class="regression-type"></div>
+                            <div class="regression-type" id="regression-radio"></div>
+                            <div class="power-area">
+                                <label for="number-input-id" id="number-label-id">Степень</label>
+                                <input type="number" min="1" max="100" value="" class="number-input" id="number-input-id">
+                            </div>
                         </div>
                         <div class="analysis-btn">
                             <form method="post" class="analysis-form">
                                 {% csrf_token %}
                                 <button type="button" class="button" id="submit-id">Анализ</button>
                             </form>
+                        </div>
+                    </div>
+                    <div class="tables-area">
+                        <div class="first-table-div">
+                            <table class="iovar-table"></table>
+                        </div>
+                        <div class="second-table-div">
+                            <table class="summary-table"></table>
+                        </div>
+                        <div class="third-table-div">
+                            <table class="anova-table"></table>
+                        </div>
+                        <div class="fourth-table-div">
+                            <table class="coef-table"></table>
                         </div>
                     </div>
                 </div>
@@ -92,6 +110,30 @@
                 radioResult.push(radio.value)
             }
         }
+        
+        let analysisType;
+        let polynomDegree;
+        let regressions = document.querySelectorAll('.radio-regr');
+        let numberInput = document.getElementById('number-input-id');
+
+        for(let item of regressions) {
+            if(item.checked == true) {
+                if(item.value == 'Простая линейная') {
+                    analysisType = 'simple_linear';
+                } else if(item.value == 'Простая полиноминальная') {
+                    analysisType = 'simple_polynominal';
+                } else if(item.value == 'Множественная Линейная') {
+                    analysisType = 'multiple_linear';
+                } else if(item.value == 'Множественная Полиноминальная') {
+                    analysisType = 'multiple_polynominal';
+                }
+            }
+        }
+
+        polynomDegree = numberInput.getAttribute("value");
+        console.log(polynomDegree);
+        console.log(analysisType);
+
         console.log('Befor sending request')
         $.ajax({
             url: 'analysis',
@@ -101,12 +143,12 @@
                 'status': 'OK',
                 'listOfCheckboxes': checkResult,
                 'listOfRadio': radioResult,
-                'analysis_type': 'multiple_polynominal',
-                'polynom_degree': 1,
+                'analysis_type': analysisType,
+                'polynom_degree': polynomDegree,
                 'csrfmiddlewaretoken': '{{ csrf_token }}'
             },
             success: function (response) {
-                console.log(response)
+                console.log(response);
                 //$('.result-area').html(response);
                 alert('Successful!')
             },
@@ -116,10 +158,6 @@
             
         })
     })
-
-
-
-
     
     $('.var-form').on('click', 'input', function(e){
         let checkboxes = document.querySelectorAll('.checkbox')
@@ -154,34 +192,83 @@
 
 
                 let area = document.querySelector('.regression-area');
+                let regressionWrapper = document.querySelector('.regression-wrapper');
                 let regressionDiv = document.querySelector('.regression-type');
+                let submitBtn = document.getElementById("submit-id");
+                let powerArea = document.querySelector('.power-area');
+                powerArea.style.display = "none";
+                submitBtn.disabled = true;
+                let radioLable;
+                let radio;
 
                 while (regressionDiv.firstChild) {
                     regressionDiv.removeChild(regressionDiv.firstChild);
                 }
                 console.log(json);
 
+                let counter = 1;
                 if (json.analysis_data == 'Valid') {
                     for (let i in json.type_of_analys) {
-                        console.log(json.type_of_analys[i])
-                        let btn = document.createElement("button");
-                        btn.className = "button";
-                        btn.type = "button";
-                        btn.innerHTML = json.type_of_analys[i];
+                        console.log(json.type_of_analys[i]);
 
-                        regressionDiv.appendChild(btn);
+
+                        radio = document.createElement("input");
+                        radio.type = "radio";
+                        radio.name = "radio-regr";
+                        radio.className = "radio-regr";
+                        radio.id = "radio-0" + counter;
+                        radio.value = json.type_of_analys[i];
+
+                        radioLable = document.createElement("label");
+                        radioLable.className = "label-regr";
+                        radioLable.htmlFor = "radio-0" + counter;
+                        radioLable.innerHTML += json.type_of_analys[i];
+
+                        regressionDiv.appendChild(radio);   
+                        regressionDiv.appendChild(radioLable);
+
+                        counter++;
                     }
                     
                     
                     area.style.display = "flex";
                 }
 
+
+                document.getElementById('regression-radio').addEventListener('change', (e) => {
+                    let powerArea = document.querySelector('.power-area');
+                    let numberInput = document.getElementById('number-input-id');
+
+                    let radioLables = document.querySelectorAll('.label-regr');
+                    if(event.target.value == 'Множественная Полиноминальная' || event.target.value == 'Простая полиноминальная') { 
+                        powerArea.style.display = "inline-block";
+                        numberInput.setAttribute("value", "");
+                        if($("#number-input-id").attr('value') == "" || $("#number-input-id").attr('value') == "null") {
+                            document.getElementById("submit-id").disabled = true;
+                        } else {
+                            document.getElementById("submit-id").disabled = false;
+                        }
+                        $("input[type=number]").click(function(e) {
+                            $(this).attr( 'value', $(this).val() );
+                            if($("#number-input-id").attr('value') == "" || $("#number-input-id").attr('value') == "null") {
+                                document.getElementById("submit-id").disabled = true;
+                            } else {
+                                document.getElementById("submit-id").disabled = false;
+                            }
+                        });
+                    } else {
+                        powerArea.style.display = "none";
+                        numberInput.setAttribute("value", null);
+                        document.getElementById("submit-id").disabled = false;
+                    }
+                });
             },
             error: function (response) {
 
             }
         });
      });
+
 
         const fileUploader = document.getElementById('id_file');
         const progress = document.getElementById('progress');
@@ -258,5 +345,6 @@
             }
         });
     </script>
+    <script src="{% static 'welcome/table.js' %}"></script>   
 </body>
 </html>
