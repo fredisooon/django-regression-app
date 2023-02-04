@@ -2,6 +2,8 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 import pandas as pd
+import statsmodels.api as sm
+import json
 
 
 def simple_linear_regression(request):
@@ -13,21 +15,37 @@ def simple_linear_regression(request):
 
     X = np.array((df[indepVar[0]])).reshape((-1, 1))
     Y = np.array((df[depVar[0]]))
+    X = sm.add_constant(X)
 
-    model = LinearRegression().fit(X, Y)
+    est_model=sm.OLS(Y, X).fit()
 
-    return {'status': 'simple_linear',
-            'coef': model.coef_.tolist(),
-            'intercept': model.intercept_,
-            'R square': model.score(X, Y)}
+    io_vars_dict = [
+        {'name': 1, 'input_vars': indepVar[0], 'removed_vars': '-', 'method': 'Enter'}
+    ]
 
+    summary_dict = [
+        {'name': 1, 'R': est_model.rsquared ** 0.5, 'R_squared': est_model.rsquared, 'R_adj': est_model.rsquared_adj, 'std_err_est': est_model.scale ** 0.5}
+    ]
 
+    anova_dict = [
+        {'name': 'Регрессия', 'sum_of_square': '-', 'deg_freedom': est_model.df_model, 'square_mean': '-', 'f-value': est_model.fvalue, 'p-value': '-'},
+        {'name': 'Остаток', 'sum_of_square': '-', 'deg_freedom': '-', 'square_mean': '-', 'f-value': '-', 'p-value': '-'},
+        {'name': 'Всего', 'sum_of_square': '-', 'deg_freedom': '-', 'square_mean': '-', 'f-value': '', 'p-value': '-'}
+    ]
 
-    # return {'status': 'simple_linear',
-    #         'io_vars': model.coef_.tolist(),
-    #         'summary_for_model': model.intercept_,
-    #         'anova': model.score(X, Y),
-    #         'coefs': 1}
+    coefs_dict = [
+        {'name': '(Константа)', 'B': est_model.params[0], 'std_err': est_model.bse[0], 'beta': '-', 't-value': est_model.tvalues[0], 'p-value': est_model.pvalues[0]},
+        {'name': indepVar[0], 'B': est_model.params[1], 'std_err': est_model.bse[1], 'beta': '-', 't-value': est_model.tvalues[1], 'p-value': est_model.pvalues[1]}
+    ]
+
+    return {
+        'status': 'OK',
+        'regression_type': 'simple_linear',
+        'io_vars': io_vars_dict,
+        'summary': summary_dict,
+        'anova': anova_dict,
+        'coefs': coefs_dict
+    }
 
 
 def simple_polynominal_regression(request):

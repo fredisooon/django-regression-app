@@ -149,8 +149,8 @@
             },
             success: function (response) {
                 console.log(response);
-                //$('.result-area').html(response);
-                alert('Successful!')
+                alert('Successful!');
+                displayResultTable(response);
             },
             error: function (response) { 
                 alert('Error')

@@ -190,11 +190,13 @@ input[type=file] {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
     gap: 20px;
     padding-bottom: 50px;
 }
 .radio {
-    flex-basis: 50%;
+    flex-basis: 40%;
+    flex-wrap: wrap;
 }
 #radio-area {
     display: flex;
@@ -209,7 +211,8 @@ input[type=file] {
     margin-right: 3px;
 }
 .checkboxes{
-    flex-basis: 50%;
+    flex-basis: 40%;
+    flex-wrap: wrap;
 }
 #checkboxes-area {
     display: flex;

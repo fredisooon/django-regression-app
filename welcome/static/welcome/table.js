@@ -29,8 +29,9 @@ function ioVarTable(json){
                          'Удаленные переменные', 
                          'Метод']
     createHeadForTable(table, headersList)
-    
+    fillBody(json, table, 'io_vars')
 }
+
 function summaryForModelTable(json){
     let table = document.querySelector(".summary-table");
     let caption = table.createCaption()
@@ -42,7 +43,9 @@ function summaryForModelTable(json){
                          'Стандартная ошибка оценки']
 
     createHeadForTable(table, headersList)
+    fillBody(json, table, 'summary');
 }
+
 function anovaTable(json){
     let table = document.querySelector(".anova-table");
     let caption = table.createCaption()
@@ -55,7 +58,9 @@ function anovaTable(json){
                          'Значимость']
 
     createHeadForTable(table, headersList)
+    fillBody(json, table, 'anova')
 }
+
 function coefTable(json){
     let table = document.querySelector(".coef-table");
     let caption = table.createCaption()
@@ -67,8 +72,25 @@ function coefTable(json){
                          't',
                          'Значимость']
     
-    createHeadForTable(table, headersList)
+    createHeadForTable(table, headersList);
+    fillBody(json, table, 'coefs');
 }
 
-
-
+function fillBody(json, table, table_name) {
+    let body = table.createTBody();
+    for (let jsonrow in json[table_name]) {
+        let row = body.insertRow();
+        for (let info in json[table_name][jsonrow]) {
+            let cell = row.insertCell();
+            console.log(typeof(json[table_name][jsonrow][info]))
+            if (typeof(json[table_name][jsonrow][info]) === 'number') {
+                let text = document.createTextNode(json[table_name][jsonrow][info].toFixed(3));
+                cell.appendChild(text);
+            }
+            else {
+                let text = document.createTextNode(json[table_name][jsonrow][info]);
+                cell.appendChild(text);
+            }
+        }
+    }
+}
