@@ -6,7 +6,7 @@ from welcome.utils.validate_service import *
 from welcome.utils.regression_service import *
 from django.conf import settings
 import pandas as pd
-import json
+
 # Create your views here.
 
 def analysis(request):
