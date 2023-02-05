@@ -84,12 +84,48 @@ def multiple_linear_regression(request):
         temp = df[[column]].to_numpy()
         X = np.concatenate([X, temp], axis=1)
 
-    model = LinearRegression().fit(X, Y)
+    X = sm.add_constant(X) 
+    est_model=sm.OLS(Y, X).fit()
+
+    print(est_model.summary())
+
+    io_vars_dict = [
+        {'name': 1, 'input_vars': indepVar, 'removed_vars': '-', 'method': 'Enter'}
+    ]
+
+    summary_dict = [
+        {'name': 1, 'R': est_model.rsquared ** 0.5, 'R_squared': est_model.rsquared, 'R_adj': est_model.rsquared_adj, 'std_err_est': est_model.scale ** 0.5}
+    ]
+
+    anova_dict = [
+        {'name': 'Регрессия', 'sum_of_square': '-', 'deg_freedom': est_model.df_model, 'square_mean': '-', 'f-value': est_model.fvalue, 'p-value': '-'},
+        {'name': 'Остаток', 'sum_of_square': '-', 'deg_freedom': '-', 'square_mean': '-', 'f-value': '-', 'p-value': '-'},
+        {'name': 'Всего', 'sum_of_square': '-', 'deg_freedom': '-', 'square_mean': '-', 'f-value': '', 'p-value': '-'}
+    ]
+
+    coefs_dict = [
+        {'name': '(Константа)', 'B': est_model.params[0], 'std_err': est_model.bse[0], 'beta': '-', 't-value': est_model.tvalues[0], 'p-value': est_model.pvalues[0]}
+    ]
     
-    return {'status': 'multiple_linear',
-            'coef': model.coef_.tolist(),
-            'intercept': model.intercept_,
-            'R square': model.score(X, Y)}
+    for i in range(len(indepVar)):
+        temp_dict = {}
+        temp_dict['name'] = indepVar[i]
+        temp_dict['B'] = est_model.params[i+1]
+        temp_dict['std_err'] = est_model.bse[i+1]
+        temp_dict['beta'] = '-'
+        temp_dict['t-value'] = est_model.tvalues[i+1]
+        temp_dict['p-value'] = est_model.pvalues[i+1]
+        coefs_dict.append(temp_dict)
+
+        
+    return {
+        'status': 'OK',
+        'regression_type': 'multiple_linear',
+        'io_vars': io_vars_dict,
+        'summary': summary_dict,
+        'anova': anova_dict,
+        'coefs': coefs_dict
+    }
 
 
 def multiple_polynom_regression(request):
