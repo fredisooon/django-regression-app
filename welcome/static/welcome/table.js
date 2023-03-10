@@ -2,12 +2,15 @@ function displayResultTable(response) {
     response = JSON.stringify(response);
     let json = JSON.parse(response);
     
-    ioVarTable(json)
-    summaryForModelTable(json)
-    anovaTable(json)
-    coefTable(json)
+    ioVarTable(json);
+    summaryForModelTable(json);
+    anovaTable(json);
+    coefTable(json);
 
+    styleTables();
 
+    let toElement = document.querySelector('.tables-area');
+    toElement.scrollIntoView();
 }
 function createHeadForTable(table, headersList) {
     let thead = table.createTHead();
@@ -63,7 +66,7 @@ function anovaTable(json){
 
 function coefTable(json){
     let table = document.querySelector(".coef-table");
-    let caption = table.createCaption()
+    let caption = table.createCaption();
     caption.textContent = 'Коэффициенты'
     const headersList = ['Модель',
                          'B',
@@ -92,5 +95,62 @@ function fillBody(json, table, table_name) {
                 cell.appendChild(text);
             }
         }
+    }
+}
+
+function styleTables() {
+    document.querySelector('.tables-area').style.borderTop = "1px solid #95989c";
+    let tables = document.querySelectorAll('.table');
+    for(let item of tables) {
+        item.style.border = "1px solid #95989c";
+    }
+    let infoBlocks = document.querySelectorAll('.info');
+    for(let item of infoBlocks) {
+        item.style.display = "block";
+    }
+
+    getDependentVar();
+    getPredictors();
+}
+
+function getDependentVar() {
+    let radioItems = document.querySelectorAll('.radio-item');
+    let dependent = document.querySelectorAll('.dependent');
+
+    for(let item of dependent) {
+        for (let radio of radioItems) {
+            if (radio.checked == true) {
+                item.innerHTML = radio.value;
+            }
+        }
+    }
+}
+
+function getPredictors() {
+    let checkboxes = document.querySelectorAll('.checkbox');
+    let predictors = document.querySelectorAll('.predictors');
+    
+    for(let item of predictors) {
+        item.innerHTML = "";
+    }
+
+    let checkResult = [];
+
+    for(let item of predictors) {
+        for (let checkbox of checkboxes) {
+            if (checkbox.checked == true) {
+                checkResult.push(checkbox.value)
+            }
+        }
+
+        for(let i = 0; i < checkResult.length; i++) {
+            if(i == checkResult.length - 1) {
+                item.innerHTML += checkResult[i];
+            } else {
+                item.innerHTML += checkResult[i] + ', ';
+            }
+        }
+
+        checkResult = [];
     }
 }

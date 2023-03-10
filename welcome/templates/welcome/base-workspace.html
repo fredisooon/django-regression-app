@@ -71,17 +71,31 @@
                         </div>
                     </div>
                     <div class="tables-area">
-                        <div class="first-table-div">
-                            <table class="iovar-table"></table>
+                        <div class="first-table-div table-div">
+                            <table class="iovar-table table"></table>
+                            <div class="info">
+                                <p class="dependent-var">a. Зависимая переменная: <span class="dependent"></span></p>
+                                <p class="dependent-var">b. Все требуемые переменные введены</p>
+                            </div>
                         </div>
-                        <div class="second-table-div">
-                            <table class="summary-table"></table>
+                        <div class="second-table-div table-div">
+                            <table class="summary-table table"></table>
+                            <div class="info">
+                                <p class="dependent-var">a. Предикторы: (константа), <span class="predictors"></span></p>
+                            </div>
                         </div>
-                        <div class="third-table-div">
-                            <table class="anova-table"></table>
+                        <div class="third-table-div table-div">
+                            <table class="anova-table table"></table>
+                            <div class="info">
+                                <p class="dependent-var">a. Зависимая переменная: <span class="dependent"></span></p>
+                                <p class="dependent-var">b. Предикторы: (константа), <span class="predictors"></span></p>
+                            </div>
                         </div>
-                        <div class="fourth-table-div">
-                            <table class="coef-table"></table>
+                        <div class="fourth-table-div table-div">
+                            <table class="coef-table table"></table>
+                            <div class="info">
+                                <p class="dependent-var">a. Зависимая переменная: <span class="dependent"></span></p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -95,10 +109,10 @@
     <script>
     
     $('.analysis-form').on('click', 'button', function(e){
-        let checkboxes = document.querySelectorAll('.checkbox')
-        let radioItems = document.querySelectorAll('.radio-item')
-        let checkResult = []
-        let radioResult = []
+        let checkboxes = document.querySelectorAll('.checkbox');
+        let radioItems = document.querySelectorAll('.radio-item');
+        let checkResult = [];
+        let radioResult = [];
         for (let checkbox of checkboxes) {
             if (checkbox.checked == true) {
                 checkResult.push(checkbox.value)
@@ -131,8 +145,8 @@
         }
 
         polynomDegree = numberInput.getAttribute("value");
-        console.log(polynomDegree);
-        console.log(analysisType);
+
+        deleteOldTableData();
 
         console.log('Befor sending request')
         $.ajax({
@@ -148,8 +162,6 @@
                 'csrfmiddlewaretoken': '{{ csrf_token }}'
             },
             success: function (response) {
-                console.log(response);
-                alert('Successful!');
                 displayResultTable(response);
             },
             error: function (response) { 
@@ -268,6 +280,17 @@
             }
         });
      });
+
+     function deleteOldTableData() {
+        let tables = document.querySelectorAll('.table');
+        for (let table of tables) {
+            let child = table.lastChild;
+            while(child) {
+                table.removeChild(child);
+                child = table.lastChild;
+            }
+        }
+     }
 
 
         const fileUploader = document.getElementById('id_file');

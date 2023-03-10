@@ -237,7 +237,7 @@ input[type=file] {
     justify-content: space-between;
     align-items: center;
     padding-top: 50px;
-    padding-bottom: 30px;
+    padding-bottom: 50px;
     border-top: 1px solid #95989c;
 }
 .regression-title {
@@ -295,4 +295,33 @@ input[type=file] {
     background-color:#10243d;
     border-color: #fff;
     color: #fff;
+}
+.tables-area {
+    text-align: center;
+    padding-top: 80px;
+}
+.table-div {
+    margin-bottom: 30px;
+}
+.table {
+    padding: 10px;
+    border-collapse: collapse;
+}
+caption {
+    font-size: 18px;
+    color: #10243d;
+    font-weight: 500;
+    margin-bottom: 15px;
+    text-align: left;
+}
+td, th {
+    padding: 10px;
+    border: 1px solid #95989c;
+}
+tr>td:first-child {
+    background-color: #dbdbdb;
+}
+.info {
+    display: none;
+    text-align: left;
 }
