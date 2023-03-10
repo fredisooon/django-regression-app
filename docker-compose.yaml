@@ -1,0 +1,9 @@
+version: '3.9'
+
+services:
+  django:
+    image: django-docker:0.0.1
+    build: .
+    command: python3 manage.py runserver 0.0.0.0:3456
+    ports:
+      - "8000:3456"
