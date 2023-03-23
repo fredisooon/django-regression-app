@@ -139,7 +139,8 @@ def multiple_linear_regression(request):
 def multiple_polynom_regression(request):
     indepVar = request.POST.getlist('listOfCheckboxes[]')
     depVar = request.POST.getlist('listOfRadio[]')
-    
+    polynomDegree = int(request.POST['polynom_degree'])
+
     df = pd.read_csv('welcome/media/data.csv')
 
     X = df[[indepVar[0]]].to_numpy()
@@ -149,14 +150,32 @@ def multiple_polynom_regression(request):
         temp = df[[column]].to_numpy()
         X = np.concatenate([X, temp], axis=1)
 
-    poly = PolynomialFeatures(degree=int(request.POST['polynom_degree']),
-                              include_bias=False)
+    poly = PolynomialFeatures(degree=polynomDegree, include_bias=False)
     poly_features = poly.fit_transform(X)
+    est_model=sm.OLS(Y, poly_features).fit()
 
-    poly_reg_model = LinearRegression()
-    poly_reg_model.fit(poly_features, Y)
+    print(est_model.summary())
+    io_vars_dict = [
+        {'name': 1, 'input_vars': indepVar, 'removed_vars': '-', 'method': 'Enter'}
+    ]
 
-    return {'status': 'multiple_polynom',
-            'coef': poly_reg_model.coef_.tolist(),
-            'intercept': poly_reg_model.intercept_,
-            'R square': poly_reg_model.score(poly_features, Y)}
+    summary_dict = [
+        {'name': 1, 'R': est_model.rsquared ** 0.5, 'R_squared': est_model.rsquared, 'R_adj': est_model.rsquared_adj, 'std_err_est': est_model.scale ** 0.5}
+    ]
+
+    coefs_dict = [
+        {'name': '(Константа)', 'B': est_model.params[0], 'std_err': est_model.bse[0], 'beta': '-', 't-value': est_model.tvalues[0], 'p-value': est_model.pvalues[0]}
+    ]
+
+    for index in range(1, len(est_model.params)):
+        coefs_dict.append(
+            {'name': 'x'+str(index), 'B': est_model.params[index], 'std_err': est_model.bse[index], 'beta': '-', 't-value': est_model.tvalues[index], 'p-value': est_model.pvalues[index]}
+        )
+
+    return {
+        'status': 'OK',
+        'regression_type': 'multiple_polynom',
+        'io_vars': io_vars_dict,
+        'summary': summary_dict,
+        'coefs': coefs_dict
+    }

@@ -6,7 +6,6 @@ function displayResultTable(response) {
     summaryForModelTable(json);
     //anovaTable(json);
     coefTable(json);
-
     styleTables();
 
     let toElement = document.querySelector('.tables-area');
