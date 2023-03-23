@@ -4,9 +4,8 @@ function displayResultTable(response) {
     
     ioVarTable(json);
     summaryForModelTable(json);
-    anovaTable(json);
+    //anovaTable(json);
     coefTable(json);
-
     styleTables();
 
     let toElement = document.querySelector('.tables-area');
@@ -49,20 +48,6 @@ function summaryForModelTable(json){
     fillBody(json, table, 'summary');
 }
 
-function anovaTable(json){
-    let table = document.querySelector(".anova-table");
-    let caption = table.createCaption()
-    caption.textContent = 'ANOVA'
-    const headersList = ['Модель',
-                         'Сумма квадратов',
-                         'ст. св.', 
-                         'Средний квадрат',
-                         'F',
-                         'Значимость']
-
-    createHeadForTable(table, headersList)
-    fillBody(json, table, 'anova')
-}
 
 function coefTable(json){
     let table = document.querySelector(".coef-table");
