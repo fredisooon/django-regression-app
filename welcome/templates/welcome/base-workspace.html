@@ -125,14 +125,19 @@
 
         for(let item of regressions) {
             if(item.checked == true) {
-                if(item.value == 'Простая линейная') {
+
+                if(item.value == 'Простая Линейная') {
                     analysisType = 'simple_linear';
-                } else if(item.value == 'Простая полиноминальная') {
+                } else if(item.value == 'Простая Полиноминальная') {
                     analysisType = 'simple_polynominal';
                 } else if(item.value == 'Множественная Линейная') {
                     analysisType = 'multiple_linear';
                 } else if(item.value == 'Множественная Полиноминальная') {
                     analysisType = 'multiple_polynominal';
+                } else if (item.value == 'Простая Логистическая') {
+                    analysisType = 'simple_logistic';
+                } else if (item.value == 'Множественная Логистическая') {
+                    analysisType = 'multiple_logistic';
                 }
             }
         }

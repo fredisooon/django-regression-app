@@ -3,7 +3,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 import pandas as pd
 import statsmodels.api as sm
-import json
+from welcome.utils.json_service import *
 
 
 def simple_linear_regression(request):
@@ -179,3 +179,36 @@ def multiple_polynom_regression(request):
         'summary': summary_dict,
         'coefs': coefs_dict
     }
+
+
+def simple_logistic_regression(request):
+    indepVar = request.POST.getlist('listOfCheckboxes[]')
+    depVar = request.POST.getlist('listOfRadio[]')
+
+    df = pd.read_csv('welcome/media/data.csv')
+
+    x = df[[indepVar[0]]]
+    y = df[[depVar[0]]]
+    
+    X = sm.add_constant(x)
+
+    est_model = sm.Logit(y, X).fit()
+
+    return logistic_result_response(est_model, indepVar)
+
+
+def multiple_logistic_regression(request):
+    indepVar = request.POST.getlist('listOfCheckboxes[]')
+    depVar = request.POST.getlist('listOfRadio[]')
+
+    df = pd.read_csv('welcome/media/data.csv')
+
+    x = df[indepVar]
+    y = df[[depVar[0]]]
+    
+    X = sm.add_constant(x)
+
+    est_model = sm.Logit(y, X).fit()
+
+    print(est_model.summary2())
+    return multiple_logistic_response(est_model, indepVar)

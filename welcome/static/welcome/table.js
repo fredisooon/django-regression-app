@@ -4,8 +4,8 @@ function displayResultTable(response) {
     
     ioVarTable(json);
     summaryForModelTable(json);
-    //anovaTable(json);
     coefTable(json);
+
     styleTables();
 
     let toElement = document.querySelector('.tables-area');
@@ -35,6 +35,17 @@ function ioVarTable(json){
 }
 
 function summaryForModelTable(json){
+    if (json['regression_type'] === 'simple_linear' || 
+        json['regression_type'] === 'simple_polynominal' ||
+        json['regression_type'] === 'multiple_linear' ||
+        json['regression_type'] === 'multiple_polynominal') {
+        summaryForMoreTypes(json);
+    }
+    else if (json['regression_type'] === 'simple_logistical') {
+        summaryForSimpleLogistical(json);
+    }
+}
+function summaryForMoreTypes(json) {
     let table = document.querySelector(".summary-table");
     let caption = table.createCaption()
     caption.textContent = 'Сводка для модели'
@@ -47,9 +58,34 @@ function summaryForModelTable(json){
     createHeadForTable(table, headersList)
     fillBody(json, table, 'summary');
 }
+function summaryForSimpleLogistical(json) {
+    let table = document.querySelector(".summary-table");
+    let caption = table.createCaption()
+    caption.textContent = 'Сводка для модели'
+    const headersList = ['Модель',
+                         'Псевдо R - квдрат',
+                         'Log-Likelihood',
+                         'LL-null', 
+                         'AIC',
+                         'BIC']
 
+    createHeadForTable(table, headersList)
+    fillBody(json, table, 'summary');
+}
 
 function coefTable(json){
+    if (json['regression_type'] === 'simple_linear' || 
+        json['regression_type'] === 'simple_polynominal' ||
+        json['regression_type'] === 'multiple_linear' ||
+        json['regression_type'] === 'multiple_polynominal') {
+        coefForMoreTypes(json);
+    }
+    else if (json['regression_type'] === 'simple_logistical') {
+        coefForSimpleLogistical(json);
+    }
+    
+}
+function coefForMoreTypes(json) {
     let table = document.querySelector(".coef-table");
     let caption = table.createCaption();
     caption.textContent = 'Коэффициенты'
@@ -58,6 +94,20 @@ function coefTable(json){
                          'Стандартная ошибка', 
                          'Бета',
                          't',
+                         'Значимость']
+    
+    createHeadForTable(table, headersList);
+    fillBody(json, table, 'coefs');
+}
+function coefForSimpleLogistical(json) {
+    let table = document.querySelector(".coef-table");
+    let caption = table.createCaption();
+    caption.textContent = 'Коэффициенты'
+    const headersList = ['Модель',
+                         'B',
+                         'Стандартная ошибка', 
+                         'Бета',
+                         'z',
                          'Значимость']
     
     createHeadForTable(table, headersList);
@@ -139,3 +189,4 @@ function getPredictors() {
         checkResult = [];
     }
 }
+
