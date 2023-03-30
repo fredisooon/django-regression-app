@@ -48,6 +48,7 @@ def simple_polynominal_regression(request):
     depVar = request.POST.getlist('listOfRadio[]')
     
     polynomDegree = int(request.POST['polynom_degree'])
+    print(polynomDegree)
     df = pd.read_csv('welcome/media/data.csv')
 
     X = np.array((df[indepVar[0]])).reshape((-1, 1))
@@ -212,3 +213,11 @@ def multiple_logistic_regression(request):
 
     print(est_model.summary2())
     return multiple_logistic_response(est_model, indepVar)
+
+
+def simple_ordinal_regression(request):
+    return {'name': 'Fyodor'}
+
+
+def multiple_ordinal_regression(request):
+    return {'name': 'Fyodor_multiple'}

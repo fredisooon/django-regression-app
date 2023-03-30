@@ -5,12 +5,22 @@ from welcome.utils.file_utils import *
 from welcome.utils.validate_service import *
 from welcome.utils.regression_service import *
 from welcome.utils.json_service import *
+import json
 
 # Create your views here.
 
 def analysis(request):
     print("INSIDE ANALYSIS METHOD")
-    print(request.POST['analysis_type'])
+    sendedMap = request.POST['priority']
+    print(sendedMap)
+
+    myMapDict = json.loads(sendedMap)
+    print(type(myMapDict))
+    
+    myDict = {k:v for k, v in myMapDict}
+    print(myDict)
+    print(type(myDict))
+
 
     if (request.POST['analysis_type'] == 'simple_linear'):
         return JsonResponse(simple_linear_regression(request))
@@ -24,6 +34,10 @@ def analysis(request):
         return JsonResponse(simple_logistic_regression(request))
     elif (request.POST['analysis_type'] == 'multiple_logistic'):
         return JsonResponse(multiple_logistic_regression(request))
+    elif (request.POST['analysis_type'] == 'multiple_ordinal'):
+        return JsonResponse(multiple_ordinal_regression(request))
+    elif (request.POST['analysis_type'] == 'simple_ordinal'):
+        return JsonResponse(simple_ordinal_regression(request))
 
 
     return JsonResponse({'status': 'error',
@@ -60,6 +74,7 @@ def workspace(request):
 def result(request):
     depVar = request.POST.getlist('listOfRadio[]')
     indepVar = request.POST.getlist('listOfCheckboxes[]')
+    df = pd.read_csv('welcome/media/data.csv')
     
 
 
@@ -92,7 +107,7 @@ def result(request):
 
         elif (is_ordinal_dataset(depVar, indepVar)):
             print('Dataset is Ordinal')
-            return valid_response(['Простая Порядковая'])
+            return valid_ordinal_response(['Простая Порядковая'], df[depVar[0]].unique().tolist())
 
         elif (is_linear_dataset(depVar, indepVar)):
             print('Dataset is Linear')

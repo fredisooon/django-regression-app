@@ -87,3 +87,12 @@ def multiple_logistic_response(model, indepVar):
         'summary': summary_dict,
         'coefs': coefs_dict
     }
+
+
+def valid_ordinal_response(regressionType, categoriesList):
+    return JsonResponse({'error_flag': False,
+                         'war_falg': False,
+                         'message': 'OK',
+                         'analysis_data': 'Valid',
+                         'type_of_analys': regressionType,
+                         'categories_list': categoriesList})

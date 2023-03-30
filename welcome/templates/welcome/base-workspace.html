@@ -70,6 +70,13 @@
                             </form>
                         </div>
                     </div>
+                    <div class="categorization-area">
+                        <div class="choosing-wrapper">
+                            <h3 class="choosing-title">Порядок категориальной переменной</h3>
+                            <div class="categories-types">
+                            </div>
+                        </div>
+                    </div>
                     <div class="tables-area">
                         <div class="first-table-div table-div">
                             <table class="iovar-table table"></table>
@@ -102,6 +109,39 @@
     <script>
     
     $('.analysis-form').on('click', 'button', function(e){
+        let map = new Map();
+
+        map.set("1", "str1");    // строка в качестве ключа
+        map.set(1, "num1");      // цифра как ключ
+        map.set(true, "bool1");  // булево значение как ключ
+
+
+
+        let amyMap = new Map();
+
+        // loop through each div with class 'myDiv'
+        $('.categories-box').each(function() {
+            // get the label and select elements within the div
+            let label = $(this).find('.label-div label');
+            let select = $(this).find('.select-div select');
+
+            // get the text of the label and the value of the select
+            let labelText = label.text().trim();
+            let selectValue = select.val();
+
+            // add the key-value pair to the map
+            amyMap.set(labelText, selectValue);
+        });
+        console.log(amyMap);
+
+
+
+
+
+
+        
+
+        let myMap = JSON.stringify(Array.from(amyMap.entries()));
         let checkboxes = document.querySelectorAll('.checkbox');
         let radioItems = document.querySelectorAll('.radio-item');
         let checkResult = [];
@@ -138,6 +178,10 @@
                     analysisType = 'simple_logistic';
                 } else if (item.value == 'Множественная Логистическая') {
                     analysisType = 'multiple_logistic';
+                } else if (item.value == 'Простая Порядковая') {
+                    analysisType = 'simple_ordinal';
+                } else if (item.value == 'Множественная Порядковая') {
+                    analysisType = 'multiple_ordinal';
                 }
             }
         }
@@ -153,6 +197,7 @@
             dataType: 'json',
             data: {
                 'status': 'OK',
+                'priority': myMap,
                 'listOfCheckboxes': checkResult,
                 'listOfRadio': radioResult,
                 'analysis_type': analysisType,
@@ -250,7 +295,8 @@
                     let numberInput = document.getElementById('number-input-id');
 
                     let radioLables = document.querySelectorAll('.label-regr');
-                    if(event.target.value == 'Множественная Полиноминальная' || event.target.value == 'Простая полиноминальная') { 
+                    if (event.target.value == 'Множественная Полиноминальная' || event.target.value == 'Простая Полиноминальная') { 
+
                         powerArea.style.display = "inline-block";
                         numberInput.setAttribute("value", "");
                         if($("#number-input-id").attr('value') == "" || $("#number-input-id").attr('value') == "null") {
@@ -266,7 +312,59 @@
                                 document.getElementById("submit-id").disabled = false;
                             }
                         });
-                    } else {
+
+                    } else if (event.target.value == 'Множественная Порядковая' || event.target.value == 'Простая Порядковая') {
+                        let categoriesArea = document.querySelector('.categories-types');
+
+                        console.log(json.categories_list);
+                        let boxDiv;
+                        let labelDiv;
+                        let selectDiv;
+                        let selectLabel;
+                        let selectPriority;
+                        
+                        for (let i in json.categories_list) {
+                            console.log(json.categories_list[i]);
+                            
+                            boxDiv = document.createElement("div");
+                            boxDiv.className = "categories-box";
+
+                            labelDiv = document.createElement("div");
+                            labelDiv.className = "label-div";
+                            
+                            selectDiv = document.createElement("div");
+                            selectDiv.className = "select-div";
+
+                            selectPriority = document.createElement("select");
+                            selectPriority.className = "select-element";
+                            selectPriority.name = "select-priority";
+                            selectPriority.id = "select-priority-" + i;
+
+                            for (let i = 0; i < json.categories_list.length; i++) {
+                                selectOption = document.createElement("option");
+                                selectOption.value = i;
+                                selectOption.text = i;
+                                selectPriority.add(selectOption);
+                            }
+                            
+                            selectLabel = document.createElement("label");
+                            selectLabel.className = "label-select";
+                            selectLabel.innerHTML += json.categories_list[i];
+                            selectLabel.htmlFor = "select-priority-" + i;
+
+
+                            selectDiv.appendChild(selectPriority);
+                            labelDiv.appendChild(selectLabel);
+                            boxDiv.appendChild(labelDiv);
+                            boxDiv.appendChild(selectDiv);
+                        
+                            categoriesArea.appendChild(boxDiv);
+                        }
+                        document.getElementById("submit-id").disabled = false;
+                    }
+                    
+                    else {
+
                         powerArea.style.display = "none";
                         numberInput.setAttribute("value", null);
                         document.getElementById("submit-id").disabled = false;
