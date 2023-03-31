@@ -4,21 +4,31 @@ from welcome.forms import UploadFileForm
 from welcome.utils.file_utils import *
 from welcome.utils.validate_service import *
 from welcome.utils.regression_service import *
-from django.conf import settings
-import pandas as pd
+from welcome.utils.json_service import *
 
 # Create your views here.
 
 def analysis(request):
+    print("INSIDE ANALYSIS METHOD")
 
     if (request.POST['analysis_type'] == 'simple_linear'):
         return JsonResponse(simple_linear_regression(request))
     elif (request.POST['analysis_type'] == 'simple_polynominal'):
         return JsonResponse(simple_polynominal_regression(request))
+    elif (request.POST['analysis_type'] == 'simple_logistic'):
+        return JsonResponse(simple_logistic_regression(request))
+    elif (request.POST['analysis_type'] == 'simple_ordinal'):
+        return JsonResponse(simple_ordinal_regression(request))
+
     elif (request.POST['analysis_type'] == 'multiple_linear'):
         return JsonResponse(multiple_linear_regression(request))
     elif (request.POST['analysis_type'] == 'multiple_polynominal'):
         return JsonResponse(multiple_polynom_regression(request))
+    elif (request.POST['analysis_type'] == 'multiple_logistic'):
+        return JsonResponse(multiple_logistic_regression(request))
+    elif (request.POST['analysis_type'] == 'multiple_ordinal'):
+        return JsonResponse(multiple_ordinal_regression(request))
+    
 
 
     return JsonResponse({'status': 'error',
@@ -55,7 +65,9 @@ def workspace(request):
 def result(request):
     depVar = request.POST.getlist('listOfRadio[]')
     indepVar = request.POST.getlist('listOfCheckboxes[]')
+    df = pd.read_csv('welcome/media/data.csv')
     
+
 
     # обработка невалидных наборов переменных
     if (len(depVar) == 0 and len(indepVar) == 0):
@@ -75,34 +87,43 @@ def result(request):
                              'war_falg': True,
                              'message': 'Error: Error in the number of dependent variables'})
     
-    # проверка валидности данных для применения Простой Линейной Регрессии
-    if (len(depVar) == 1 and len(indepVar) == 1):
-        if (set_of_var_is_numeric(depVar, indepVar)):
-            return JsonResponse({'error_flag': False,
-                                 'war_falg': False,
-                                  'message': 'OK',
-                                  'analysis_data': 'Valid',
-                                  'type_of_analys': ['Простая линейная', 'Простая полиноминальная']})
+
+# проверка данных на парность (одна зависимая, одна независимая переменные)
+    if (is_pair_regression_dataset(depVar, indepVar)):
+        print('Dataset is Pair')
+
+
+        if (is_linear_dataset(depVar, indepVar)):
+            print('Dataset is Linear')
+            return valid_response(['Простая Линейная', 'Простая Полиноминальная'])
+        elif (is_logistic_dataset(depVar, indepVar)):
+            print('Dataset is Logistic')
+            return valid_response(['Простая Логистическая'])
+        elif (is_ordinal_dataset(depVar, indepVar)):
+            print('Dataset is Ordinal')
+            return valid_ordinal_response(['Простая Порядковая'], df[depVar[0]].unique().tolist())
+
         else:
-            return JsonResponse({'error_flag': False,
-                                 'war_falg': True,
-                                 'message': 'ERROR: Data type is not suitable for analysis',
-                                 'analysis_data': 'Invalid',
-                                 'type_of_analys': ['Простая линейная', 'Простая полиноминальная']})
-    
-    
-    # проверка валидности данных для применения 
-    # Множественной или Полиноминальной регрессий
-    if (len(depVar) == 1 and len(indepVar) > 1):
-        if (set_of_var_is_numeric(depVar, indepVar)):
-            return JsonResponse({'error_flag': False,
-                                 'war_falg': False,
-                                 'message': 'OK',
-                                 'analysis_data': 'Valid',
-                                 'type_of_analys': ['Множественная Линейная', 'Множественная Полиноминальная']})
+            return invalid_response(['Простая Линейная', 'Простая Полиноминальная'])
+
+# проверка данных на множественность (одна зависимая, n независимых переменных)
+    elif (is_multiple_regression_dataset(depVar, indepVar)):
+        print('Dataset is Multiple')
+        
+        if (is_multiple_linear_dataset(depVar, indepVar)):
+            print('Dataset is Multiple Linear')
+            return valid_response(['Множественная Линейная', 'Множественная Полиноминальная'])
+        elif (is_multiple_logistic_dataset(depVar, indepVar)):
+            print('Dataset is Multiple Logistic')
+            return valid_response(['Множественная Логистическая'])
+        elif (is_multiple_ordinal_dataset(depVar, indepVar)):
+            print('Dataset is Multiple Ordinal')
+            return valid_response(['Множественная Порядковая'])
+        
+
+       
         else:
-            return JsonResponse({'error_flag': False,
-                                 'war_falg': True,
-                                  'message': 'ERROR: Data type is not suitable for analysis',
-                                  'analysis_data': 'Invalid',
-                                  'type_of_analys': ['Множественная Линейная', 'Множественная Полиноминальная']})
+            return invalid_response(['Множественная Линейная', 'Множественная Полиноминальная'])
+            
+    else:
+        print("Something went wrong :|")

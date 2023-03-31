@@ -1,9 +1,11 @@
 import numpy as np
-from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 import pandas as pd
 import statsmodels.api as sm
-import json
+from welcome.utils.json_service import *
+from welcome.utils.mix_utils import *
+from pandas.api.types import CategoricalDtype
+from statsmodels.miscmodels.ordinal_model import OrderedModel
 
 
 def simple_linear_regression(request):
@@ -48,6 +50,7 @@ def simple_polynominal_regression(request):
     depVar = request.POST.getlist('listOfRadio[]')
     
     polynomDegree = int(request.POST['polynom_degree'])
+    print(polynomDegree)
     df = pd.read_csv('welcome/media/data.csv')
 
     X = np.array((df[indepVar[0]])).reshape((-1, 1))
@@ -179,3 +182,72 @@ def multiple_polynom_regression(request):
         'summary': summary_dict,
         'coefs': coefs_dict
     }
+
+
+def simple_logistic_regression(request):
+    indepVar = request.POST.getlist('listOfCheckboxes[]')
+    depVar = request.POST.getlist('listOfRadio[]')
+
+    df = pd.read_csv('welcome/media/data.csv')
+
+    x = df[[indepVar[0]]]
+    y = df[[depVar[0]]]
+    
+    X = sm.add_constant(x)
+
+    est_model = sm.Logit(y, X).fit()
+
+    return logistic_result_response(est_model, indepVar)
+
+
+def multiple_logistic_regression(request):
+    indepVar = request.POST.getlist('listOfCheckboxes[]')
+    depVar = request.POST.getlist('listOfRadio[]')
+
+    df = pd.read_csv('welcome/media/data.csv')
+
+    x = df[indepVar]
+    y = df[[depVar[0]]]
+    
+    X = sm.add_constant(x)
+
+    est_model = sm.Logit(y, X).fit()
+
+    return multiple_logistic_response(est_model, indepVar)
+
+
+def simple_ordinal_regression(request):
+    indepVar = request.POST.getlist('listOfCheckboxes[]')
+    depVar = request.POST.getlist('listOfRadio[]')
+
+    df = pd.read_csv('welcome/media/data.csv')
+    priorityList = getPriorityList(request)
+
+    cat_type = CategoricalDtype(categories=priorityList, ordered=True)
+
+    df[depVar] = df[depVar].astype(cat_type)
+
+    mod_prob = OrderedModel(df[depVar[0]],
+                            df[indepVar[0]],
+                            distr='probit')
+
+    res_prob = mod_prob.fit(method='bfgs')
+    return ordinal_result_response(res_prob, indepVar)
+
+
+def multiple_ordinal_regression(request):
+    indepVar = request.POST.getlist('listOfCheckboxes[]')
+    depVar = request.POST.getlist('listOfRadio[]')
+
+    df = pd.read_csv('welcome/media/data.csv')
+    priorityList = getPriorityList(request)
+    
+    cat_type = CategoricalDtype(categories=priorityList, ordered=True)
+
+    df[depVar] = df[depVar].astype(cat_type)
+    mod_prob = OrderedModel(df[depVar[0]],
+                            df[indepVar],
+                            distr='probit')
+
+    res_prob = mod_prob.fit(method='bfgs')
+    return multiple_ordinal_response(res_prob, indepVar)
