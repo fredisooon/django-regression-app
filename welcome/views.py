@@ -5,39 +5,30 @@ from welcome.utils.file_utils import *
 from welcome.utils.validate_service import *
 from welcome.utils.regression_service import *
 from welcome.utils.json_service import *
-import json
 
 # Create your views here.
 
 def analysis(request):
     print("INSIDE ANALYSIS METHOD")
-    sendedMap = request.POST['priority']
-    print(sendedMap)
-
-    myMapDict = json.loads(sendedMap)
-    print(type(myMapDict))
-    
-    myDict = {k:v for k, v in myMapDict}
-    print(myDict)
-    print(type(myDict))
-
 
     if (request.POST['analysis_type'] == 'simple_linear'):
         return JsonResponse(simple_linear_regression(request))
     elif (request.POST['analysis_type'] == 'simple_polynominal'):
         return JsonResponse(simple_polynominal_regression(request))
+    elif (request.POST['analysis_type'] == 'simple_logistic'):
+        return JsonResponse(simple_logistic_regression(request))
+    elif (request.POST['analysis_type'] == 'simple_ordinal'):
+        return JsonResponse(simple_ordinal_regression(request))
+
     elif (request.POST['analysis_type'] == 'multiple_linear'):
         return JsonResponse(multiple_linear_regression(request))
     elif (request.POST['analysis_type'] == 'multiple_polynominal'):
         return JsonResponse(multiple_polynom_regression(request))
-    elif (request.POST['analysis_type'] == 'simple_logistic'):
-        return JsonResponse(simple_logistic_regression(request))
     elif (request.POST['analysis_type'] == 'multiple_logistic'):
         return JsonResponse(multiple_logistic_regression(request))
     elif (request.POST['analysis_type'] == 'multiple_ordinal'):
         return JsonResponse(multiple_ordinal_regression(request))
-    elif (request.POST['analysis_type'] == 'simple_ordinal'):
-        return JsonResponse(simple_ordinal_regression(request))
+    
 
 
     return JsonResponse({'status': 'error',
@@ -101,18 +92,17 @@ def result(request):
     if (is_pair_regression_dataset(depVar, indepVar)):
         print('Dataset is Pair')
 
-        if (is_logistic_dataset(depVar, indepVar)):
+
+        if (is_linear_dataset(depVar, indepVar)):
+            print('Dataset is Linear')
+            return valid_response(['Простая Линейная', 'Простая Полиноминальная'])
+        elif (is_logistic_dataset(depVar, indepVar)):
             print('Dataset is Logistic')
             return valid_response(['Простая Логистическая'])
-
         elif (is_ordinal_dataset(depVar, indepVar)):
             print('Dataset is Ordinal')
             return valid_ordinal_response(['Простая Порядковая'], df[depVar[0]].unique().tolist())
 
-        elif (is_linear_dataset(depVar, indepVar)):
-            print('Dataset is Linear')
-            return valid_response(['Простая Линейная', 'Простая Полиноминальная'])
-        
         else:
             return invalid_response(['Простая Линейная', 'Простая Полиноминальная'])
 
@@ -120,18 +110,18 @@ def result(request):
     elif (is_multiple_regression_dataset(depVar, indepVar)):
         print('Dataset is Multiple')
         
-        if (is_multiple_logistic_dataset(depVar, indepVar)):
+        if (is_multiple_linear_dataset(depVar, indepVar)):
+            print('Dataset is Multiple Linear')
+            return valid_response(['Множественная Линейная', 'Множественная Полиноминальная'])
+        elif (is_multiple_logistic_dataset(depVar, indepVar)):
             print('Dataset is Multiple Logistic')
             return valid_response(['Множественная Логистическая'])
-
         elif (is_multiple_ordinal_dataset(depVar, indepVar)):
             print('Dataset is Multiple Ordinal')
             return valid_response(['Множественная Порядковая'])
+        
 
-        elif (is_multiple_linear_dataset(depVar, indepVar)):
-            print('Dataset is Multiple Linear')
-            return valid_response(['Множественная Линейная', 'Множественная Полиноминальная'])
-
+       
         else:
             return invalid_response(['Множественная Линейная', 'Множественная Полиноминальная'])
             

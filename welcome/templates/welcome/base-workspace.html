@@ -109,39 +109,22 @@
     <script>
     
     $('.analysis-form').on('click', 'button', function(e){
-        let map = new Map();
+        let priorityValueMap = new Map();
 
-        map.set("1", "str1");    // строка в качестве ключа
-        map.set(1, "num1");      // цифра как ключ
-        map.set(true, "bool1");  // булево значение как ключ
-
-
-
-        let amyMap = new Map();
-
-        // loop through each div with class 'myDiv'
         $('.categories-box').each(function() {
-            // get the label and select elements within the div
+
             let label = $(this).find('.label-div label');
             let select = $(this).find('.select-div select');
 
-            // get the text of the label and the value of the select
             let labelText = label.text().trim();
             let selectValue = select.val();
 
-            // add the key-value pair to the map
-            amyMap.set(labelText, selectValue);
+            priorityValueMap.set(labelText, selectValue);
         });
-        console.log(amyMap);
+        console.log(priorityValueMap);
 
+        let priorityMapJson = JSON.stringify(Array.from(priorityValueMap.entries()));
 
-
-
-
-
-        
-
-        let myMap = JSON.stringify(Array.from(amyMap.entries()));
         let checkboxes = document.querySelectorAll('.checkbox');
         let radioItems = document.querySelectorAll('.radio-item');
         let checkResult = [];
@@ -197,7 +180,7 @@
             dataType: 'json',
             data: {
                 'status': 'OK',
-                'priority': myMap,
+                'priority': priorityMapJson,
                 'listOfCheckboxes': checkResult,
                 'listOfRadio': radioResult,
                 'analysis_type': analysisType,

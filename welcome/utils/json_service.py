@@ -96,3 +96,79 @@ def valid_ordinal_response(regressionType, categoriesList):
                          'analysis_data': 'Valid',
                          'type_of_analys': regressionType,
                          'categories_list': categoriesList})
+
+
+def ordinal_result_response(model, indepVar):
+
+    io_vars_dict = [
+        {'name': 1,
+         'input_vars': indepVar[0],
+         'removed_vars': '-', 
+         'method': 'Enter'}
+    ]
+    summary_dict = [
+        {'name': 1,
+         'pseudo_r_squared': model.prsquared,
+         'log-Likelihood': model.llf,
+         'll-null': model.llnull,
+         'aic': model.aic,
+         'bic': model.bic
+         }
+    ]
+    coefs_dict = []
+
+    for i in range(len(model.params)):
+        temp_dict = {}
+        temp_dict['name'] = model.params.keys()[i]
+        temp_dict['B'] = model.params[i]
+        temp_dict['std_err'] = model.bse[i]
+        temp_dict['beta'] = '-'
+        temp_dict['t-value'] = model.tvalues[i]
+        temp_dict['p-value'] = model.pvalues[i]
+        coefs_dict.append(temp_dict)
+
+    return {
+        'status': 'OK',
+        'regression_type': 'simple_logistical',
+        'io_vars': io_vars_dict,
+        'summary': summary_dict,
+        'coefs': coefs_dict
+    }
+
+
+def multiple_ordinal_response(model, indepVar):
+
+    io_vars_dict = [
+        {'name': 1,
+         'input_vars': indepVar,
+         'removed_vars': '-', 
+         'method': 'Enter'}
+    ]
+    summary_dict = [
+        {'name': 1,
+         'pseudo_r_squared': model.prsquared,
+         'log-Likelihood': model.llf,
+         'll-null': model.llnull,
+         'aic': model.aic,
+         'bic': model.bic
+         }
+    ]
+    coefs_dict = []
+
+    for i in range(len(model.params)):
+        temp_dict = {}
+        temp_dict['name'] = model.params.keys()[i]
+        temp_dict['B'] = model.params[i]
+        temp_dict['std_err'] = model.bse[i]
+        temp_dict['beta'] = '-'
+        temp_dict['t-value'] = model.tvalues[i]
+        temp_dict['p-value'] = model.pvalues[i]
+        coefs_dict.append(temp_dict)
+
+    return {
+        'status': 'OK',
+        'regression_type': 'simple_logistical',
+        'io_vars': io_vars_dict,
+        'summary': summary_dict,
+        'coefs': coefs_dict
+    }
