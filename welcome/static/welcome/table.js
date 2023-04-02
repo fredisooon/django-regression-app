@@ -1,7 +1,7 @@
 function displayResultTable(response) {
     response = JSON.stringify(response);
     let json = JSON.parse(response);
-    
+    console.log('Inside displayResultTable')
     ioVarTable(json);
     summaryForModelTable(json);
     coefTable(json);
@@ -23,6 +23,8 @@ function createHeadForTable(table, headersList) {
 }
 
 function ioVarTable(json){
+    console.log('Inside ioVarTable')
+
     let table = document.querySelector(".iovar-table");
     let caption = table.createCaption()
     caption.textContent = 'Введенные/удаленные переменные'
@@ -35,6 +37,7 @@ function ioVarTable(json){
 }
 
 function summaryForModelTable(json){
+    console.log('Inside summaryForModelTable')
     if (json['regression_type'] === 'simple_linear' || 
         json['regression_type'] === 'simple_polynominal' ||
         json['regression_type'] === 'multiple_linear' ||
@@ -46,6 +49,7 @@ function summaryForModelTable(json){
     }
 }
 function summaryForMoreTypes(json) {
+    console.log('Inside summaryForMoreTypes')
     let table = document.querySelector(".summary-table");
     let caption = table.createCaption()
     caption.textContent = 'Сводка для модели'
@@ -74,6 +78,7 @@ function summaryForSimpleLogistical(json) {
 }
 
 function coefTable(json){
+    console.log('Inside coefTable')
     if (json['regression_type'] === 'simple_linear' || 
         json['regression_type'] === 'simple_polynominal' ||
         json['regression_type'] === 'multiple_linear' ||
@@ -86,6 +91,7 @@ function coefTable(json){
     
 }
 function coefForMoreTypes(json) {
+    console.log('Inside coefForMoreTypes')
     let table = document.querySelector(".coef-table");
     let caption = table.createCaption();
     caption.textContent = 'Коэффициенты'
