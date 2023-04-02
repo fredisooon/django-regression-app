@@ -325,3 +325,18 @@ tr>td:first-child {
     display: none;
     text-align: left;
 }
+.categorization-area {
+    display: none;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    border-top: 1px solid #95989c;
+}
+.choosing-title {
+    display: none;
+    margin-bottom: 20px;
+    color: #10243d;
+}
+.categories-box {
+    display: inline-block;
+    margin-right: 40px;
+}
