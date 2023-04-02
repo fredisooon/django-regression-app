@@ -234,6 +234,10 @@
                 let regressionDiv = document.querySelector('.regression-type');
                 let submitBtn = document.getElementById("submit-id");
                 let powerArea = document.querySelector('.power-area');
+                let categories = document.querySelector('.categorization-area');
+                let categoriesHeader = document.querySelector('.choosing-title');
+                categories.style.display = "none";
+                categoriesHeader.style.display = "none";
                 powerArea.style.display = "none";
                 submitBtn.disabled = true;
                 let radioLable;
@@ -297,7 +301,14 @@
                         });
 
                     } else if (event.target.value == 'Множественная Порядковая' || event.target.value == 'Простая Порядковая') {
+                        let categories = document.querySelector('.categorization-area');
                         let categoriesArea = document.querySelector('.categories-types');
+                        let categoriesHeader = document.querySelector('.choosing-title');
+
+                        
+
+                        categories.style.display = "block";
+                        categoriesHeader.style.display = "inline-block";
 
                         console.log(json.categories_list);
                         let boxDiv;
@@ -305,10 +316,11 @@
                         let selectDiv;
                         let selectLabel;
                         let selectPriority;
+
                         
                         for (let i in json.categories_list) {
                             console.log(json.categories_list[i]);
-                            
+
                             boxDiv = document.createElement("div");
                             boxDiv.className = "categories-box";
 
@@ -323,6 +335,13 @@
                             selectPriority.name = "select-priority";
                             selectPriority.id = "select-priority-" + i;
 
+                            selectOption = document.createElement("option");
+                            selectOption.value = "";
+                            selectOption.setAttribute("selected", "selected");
+                            selectOption.disabled = true;
+                            selectOption.text = "Choose here";
+                            selectPriority.add(selectOption);
+
                             for (let i = 0; i < json.categories_list.length; i++) {
                                 selectOption = document.createElement("option");
                                 selectOption.value = i;
@@ -334,6 +353,8 @@
                             selectLabel.className = "label-select";
                             selectLabel.innerHTML += json.categories_list[i];
                             selectLabel.htmlFor = "select-priority-" + i;
+                            selectLabel.style.textTransform = "uppercase";
+                            selectLabel.style.fontWeight = "500";
 
 
                             selectDiv.appendChild(selectPriority);
@@ -343,11 +364,43 @@
                         
                             categoriesArea.appendChild(boxDiv);
                         }
-                        document.getElementById("submit-id").disabled = false;
-                    }
                     
-                    else {
+                        var $selects = $('select');
+                        $selects.on('change', function() {
+                            $("option", $selects).prop("disabled", false);
+                            $selects.each(function() {
+                                var $select = $(this), 
+                                    $options = $selects.not($select).find('option'),
+                                    selectedText = $select.children('option:selected').text();
+                                $options.each(function() {
+                                    if($(this).text() == selectedText) $(this).prop("disabled", true);
+                                });
+                            });
+                        });
 
+                        let isOk = false;
+                        categories.addEventListener('change', function(e) {
+                            let clicked = e.target;
+                            let $selects = $('select');
+                            $selects.each(function() {
+                                let $select = $(this),
+                                    $option = $select.val();
+                                if($option != '') {
+                                    document.getElementById("submit-id").disabled = false;
+                                } else {
+                                    document.getElementById("submit-id").disabled = true;
+                                }
+                            })
+                            // if(isOk) {
+                            //     document.getElementById("submit-id").disabled = false;
+                            // } else {
+                            //     document.getElementById("submit-id").disabled = true;
+                            // }
+                        });
+                    }
+                    else {
+                        categories.style.display = "none";
+                        categoriesHeader.style.display = "none";
                         powerArea.style.display = "none";
                         numberInput.setAttribute("value", null);
                         document.getElementById("submit-id").disabled = false;
@@ -370,7 +423,6 @@
             }
         }
      }
-
 
         const fileUploader = document.getElementById('id_file');
         const progress = document.getElementById('progress');
@@ -446,6 +498,8 @@
                 feedback.style.color = 'red';
             }
         });
+
+
     </script>
     <script src="{% static 'welcome/table.js' %}"></script>   
 </body>
