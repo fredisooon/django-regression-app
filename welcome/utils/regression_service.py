@@ -146,15 +146,12 @@ def multiple_polynom_regression(request):
 
     df = pd.read_csv('welcome/media/data.csv')
 
-    X = df[[indepVar[0]]].to_numpy()
-    Y = np.array((df[depVar[0]]))
+    X = df[indepVar]
+    Y = df[depVar[0]]
 
-    for column in indepVar[1:]:
-        temp = df[[column]].to_numpy()
-        X = np.concatenate([X, temp], axis=1)
-
-    poly = PolynomialFeatures(degree=polynomDegree, include_bias=False)
+    poly = PolynomialFeatures(degree=polynomDegree)
     poly_features = poly.fit_transform(X)
+
     est_model=sm.OLS(Y, poly_features).fit()
 
     print(est_model.summary())
@@ -177,7 +174,7 @@ def multiple_polynom_regression(request):
 
     return {
         'status': 'OK',
-        'regression_type': 'multiple_polynom',
+        'regression_type': 'multiple_polynominal',
         'io_vars': io_vars_dict,
         'summary': summary_dict,
         'coefs': coefs_dict
